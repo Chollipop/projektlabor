@@ -1,0 +1,70 @@
+﻿using ProjektLavor.ViewModels;
+using ProjektLavor.Stores;
+using ProjektLavor.Services;
+using System.Configuration;
+using System.Data;
+using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace ProjektLavor
+{
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+        private readonly IServiceProvider _serviceProvider;
+
+        public App()
+        {
+            IServiceCollection services = new ServiceCollection();
+
+            services.AddSingleton<NavigationStore>();
+            services.AddSingleton<ProjectStore>();
+
+            //services.AddSingleton<INavigationService>(x => CreateEditorLayoutNavigationService(x));
+
+            services.AddTransient<EditorLayoutViewModel>(x => new EditorLayoutViewModel(
+                new ToolbarViewModel(),
+                new EditorViewModel(x.GetRequiredService<ProjectStore>())
+                ));
+            services.AddSingleton<NavigationBarViewModel>(CreateNavigationBarViewModel);
+            services.AddSingleton<MainViewModel>();
+
+            services.AddSingleton<MainWindow>(x => new MainWindow()
+            {
+                DataContext = x.GetRequiredService<MainViewModel>()
+            });
+
+            _serviceProvider = services.BuildServiceProvider();
+        }
+
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            //INavigationService<EditorLayoutViewModel> initialNavigationService = _serviceProvider.GetRequiredService<INavigationService>();
+            INavigationService<EditorLayoutViewModel> initialNavigationService = CreateEditorLayoutNavigationService(_serviceProvider);
+            initialNavigationService.Navigate();
+
+            MainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+            MainWindow.Show();
+
+            base.OnStartup(e);
+        }
+
+        private INavigationService<EditorLayoutViewModel> CreateEditorLayoutNavigationService(IServiceProvider serviceProvider)
+        {
+            return new LayoutNavigationService<EditorLayoutViewModel>(
+                serviceProvider.GetRequiredService<NavigationStore>(),
+                () => serviceProvider.GetRequiredService<EditorLayoutViewModel>(),
+                () => serviceProvider.GetRequiredService<NavigationBarViewModel>()
+            );
+        }
+
+        private NavigationBarViewModel CreateNavigationBarViewModel(IServiceProvider serviceProvider)
+        {
+            return new NavigationBarViewModel(_serviceProvider);
+        }
+    }
+
+}

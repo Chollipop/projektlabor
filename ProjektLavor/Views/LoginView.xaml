@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="ProjektLavor.Views.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ProjektLavor.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="35" />
+            <Setter Property="Margin" Value="20 0 20 10" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style TargetType="PasswordBox">
+            <Setter Property="Height" Value="35" />
+            <Setter Property="Margin" Value="20 0 20 10" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Column="1" Grid.Row="0" Margin="40 0 40 20" Text="AutoRent Alkalmazás" FontSize="24" VerticalAlignment="Bottom" TextAlignment="Center"/>
+        <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">
+            <TextBlock Text="Felhasználónév:" FontSize="16" FontWeight="Bold" TextAlignment="Center"/>
+            <TextBox Text="{Binding Username}">
+                <TextBox.InputBindings>
+                    <KeyBinding Command="{Binding LoginCommand}" Key="Enter" />
+                </TextBox.InputBindings>
+            </TextBox>
+            <TextBlock Text="Jelszó:" FontSize="16" FontWeight="Bold" TextAlignment="Center"/>
+            <!--<TextBox Text="{Binding Password}" />-->
+            <PasswordBox x:Name="password_box" PasswordChanged="password_box_PasswordChanged">
+                <PasswordBox.InputBindings>
+                    <KeyBinding Command="{Binding LoginCommand}" Key="Enter" />
+                </PasswordBox.InputBindings>
+            </PasswordBox>
+            <Button Content="Bejelentkezés" Margin="40 0" FontWeight="Bold" FontSize="14" Height="50" Command="{Binding LoginCommand}"/>
+
+            <TextBlock Text="Regisztráció" Foreground="Blue" TextDecorations="Underline" TextAlignment="Center" Margin="0 10 0 0">
+                <TextBlock.InputBindings>
+                    <MouseBinding Command="{Binding NavigateRegisterCommand}" MouseAction="LeftClick" />
+                </TextBlock.InputBindings>
+            </TextBlock>
+        </StackPanel>
+    </Grid>
+</UserControl>
