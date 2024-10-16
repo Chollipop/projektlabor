@@ -16,7 +16,7 @@ namespace ProjektLavor.ViewModels
         private ProjectStore _projectStore;
 
         //public FlowDocument CurrentDocument { get; set; }
-        public FlowDocument CurrentDocument => _projectStore.CurrentProject?.Document;
+        public FixedDocument CurrentDocument => _projectStore.CurrentProject?.Document;
 
         public EditorViewModel(ProjectStore projectStore)
         {
