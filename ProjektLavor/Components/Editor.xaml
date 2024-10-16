@@ -6,5 +6,16 @@
              xmlns:local="clr-namespace:ProjektLavor.Components"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <FlowDocumentReader Document="{Binding CurrentDocument}"/>
+    <DocumentViewer Document="{Binding CurrentDocument}">
+        <DocumentViewer.Resources>
+            <!--Hide Search-->
+            <Style TargetType="ContentControl">
+                <Setter Property="Visibility" Value="Collapsed"/>
+            </Style>
+            <!--Hide toolbar-->
+            <Style TargetType="ToolBar">
+                <Setter Property="Visibility" Value="Collapsed"/>
+            </Style>
+        </DocumentViewer.Resources>
+    </DocumentViewer>
 </UserControl>
