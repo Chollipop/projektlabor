@@ -14,19 +14,14 @@ namespace ProjektLavor.ViewModels
     public class EditorViewModel : ViewModelBase
     {
         private ProjectStore _projectStore;
-
-        //public FlowDocument CurrentDocument { get; set; }
         public FixedDocument CurrentDocument => _projectStore.CurrentProject?.Document;
+
+        public int DocumentZoom { get; set; } = 80;
 
         public EditorViewModel(ProjectStore projectStore)
         {
             _projectStore = projectStore;
             _projectStore.CurrentProjectChanged += _projectStore_CurrentProjectChanged;
-
-            //CurrentDocument = new FlowDocument();
-            //CurrentDocument.PageHeight = 1123.2; //A4 page height
-            //CurrentDocument.PageWidth = 796.8; //A4 page width
-            //CurrentDocument.Background = Brushes.White;
         }
 
         private void _projectStore_CurrentProjectChanged()

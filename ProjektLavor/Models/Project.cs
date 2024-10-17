@@ -16,10 +16,15 @@ namespace ProjektLavor.Models
     {
         public FixedDocument Document { get; set; }
 
+        private bool IsDragging = false;
+        private FrameworkElement DraggedElement;
+        private Point PointerOffsetInElement;
+
         public Project()
         {
             Document = GetTestDocument();
         }
+
         private FixedDocument GetTestDocument()
         {
             FixedDocument fixedDocument = new FixedDocument();
@@ -34,14 +39,19 @@ namespace ProjektLavor.Models
             image.Source = new BitmapImage(new Uri("Pack://application:,,,/Assets/coconut.jpg"));
             fixedPage.Children.Add(textBlock);
             fixedPage.Children.Add(image);
+
             pageContent.Child = fixedPage;
             fixedDocument.Pages.Add(pageContent);
 
-            AlignItems(
-                fixedPage.Children,
-                fixedDocument.DocumentPaginator.PageSize.Width,
-                fixedDocument.DocumentPaginator.PageSize.Height
-            );
+            fixedPage.MouseDown += FixedPage_MouseDown;
+            fixedPage.MouseUp += FixedPage_MouseUp;
+            fixedPage.MouseMove += FixedPage_MouseMove;
+
+            //AlignItems(
+            //    fixedPage.Children,
+            //    fixedDocument.DocumentPaginator.PageSize.Width,
+            //    fixedDocument.DocumentPaginator.PageSize.Height
+            //);
 
             return fixedDocument;
         }
@@ -59,8 +69,41 @@ namespace ProjektLavor.Models
             }
         }
 
+        private void FixedPage_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            if (e.OriginalSource.GetType() == typeof(FixedPage)) return;
+
+            FixedPage fixedPage = (FixedPage)sender;
+            FrameworkElement element = (FrameworkElement)e.OriginalSource;
+            PointerOffsetInElement = e.GetPosition(element);
+            IsDragging = true;
+            DraggedElement = element;
+        }
+        private void FixedPage_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            IsDragging = false;
+            DraggedElement = null;
+        }
+        private void FixedPage_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            e.Handled = true;
+            if (!IsDragging || DraggedElement == null) return;
+            
+            FixedPage fixedPage = (FixedPage)sender;
+            Point cPos = e.GetPosition(fixedPage);
+
+            DraggedElement.Margin = new Thickness(cPos.X - PointerOffsetInElement.X, cPos.Y - PointerOffsetInElement.Y, 0, 0);
+        }
+
         public void Dispose()
         {
+            foreach (PageContent pageContent in Document.Pages)
+            {
+                pageContent.Child.MouseDown -= FixedPage_MouseDown;
+                pageContent.Child.MouseUp -= FixedPage_MouseUp;
+                pageContent.Child.MouseMove -= FixedPage_MouseMove;
+            }
         }
     }
 }
