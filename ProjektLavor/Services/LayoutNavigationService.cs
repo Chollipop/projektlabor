@@ -3,7 +3,7 @@ using ProjektLavor.Stores;
 
 namespace ProjektLavor.Services
 {
-    public class LayoutNavigationService<TViewModel> : INavigationService<TViewModel>
+    public class LayoutNavigationService<TViewModel> : INavigationService
         where TViewModel : ViewModelBase
     {
         private readonly NavigationStore _navigationStore;

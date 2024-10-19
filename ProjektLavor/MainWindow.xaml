@@ -9,14 +9,23 @@
         xmlns:local="clr-namespace:ProjektLavor"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <ContentControl Content="{Binding CurrentViewModel}" IsTabStop="False">
-        <ContentControl.Resources>
+    <Grid>
+        <Grid.Resources>
             <DataTemplate DataType="{x:Type viewmodels:LayoutViewModel}">
                 <views:LayoutView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewmodels:EditorLayoutViewModel}">
                 <views:EditorLayoutView />
             </DataTemplate>
-        </ContentControl.Resources>
-    </ContentControl>
+            <DataTemplate DataType="{x:Type viewmodels:NewTextElementViewModel}">
+                <views:NewTextElementView />
+            </DataTemplate>
+        </Grid.Resources>
+
+        <components:Modal IsOpen="{Binding IsModalOpen}" Panel.ZIndex="9999">
+            <ContentControl Content="{Binding CurrentModalViewModel}" IsTabStop="False"/>
+        </components:Modal>
+
+        <ContentControl Content="{Binding CurrentViewModel}" IsTabStop="False"/>
+    </Grid>
 </Window>

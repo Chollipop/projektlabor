@@ -14,7 +14,7 @@
                     <Setter Property="Background" Value="Transparent"/>
                 </Style>
             </ToolBar.Style>
-            <Button>asd1</Button>
+            <Button Command="{Binding OpenNewTextElementModalCommand}">Add Text</Button>
             <Button>asd2</Button>
             <Button>asd3</Button>
             <Separator/>
