@@ -20,12 +20,13 @@ namespace ProjektLavor
             IServiceCollection services = new ServiceCollection();
 
             services.AddSingleton<NavigationStore>();
+            services.AddSingleton<ModalNavigationStore>();
             services.AddSingleton<ProjectStore>();
 
-            //services.AddSingleton<INavigationService>(x => CreateEditorLayoutNavigationService(x));
+            services.AddSingleton<INavigationService>(x => CreateEditorLayoutNavigationService(x));
 
             services.AddTransient<EditorLayoutViewModel>(x => new EditorLayoutViewModel(
-                new ToolbarViewModel(),
+                CreateToolbarViewModel(x),
                 new EditorViewModel(x.GetRequiredService<ProjectStore>())
                 ));
             services.AddSingleton<NavigationBarViewModel>(CreateNavigationBarViewModel);
@@ -42,8 +43,8 @@ namespace ProjektLavor
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            //INavigationService<EditorLayoutViewModel> initialNavigationService = _serviceProvider.GetRequiredService<INavigationService>();
-            INavigationService<EditorLayoutViewModel> initialNavigationService = CreateEditorLayoutNavigationService(_serviceProvider);
+            INavigationService initialNavigationService = _serviceProvider.GetRequiredService<INavigationService>();
+            //INavigationService initialNavigationService = CreateEditorLayoutNavigationService(_serviceProvider);
             initialNavigationService.Navigate();
 
             MainWindow = _serviceProvider.GetRequiredService<MainWindow>();
@@ -52,7 +53,7 @@ namespace ProjektLavor
             base.OnStartup(e);
         }
 
-        private INavigationService<EditorLayoutViewModel> CreateEditorLayoutNavigationService(IServiceProvider serviceProvider)
+        private INavigationService CreateEditorLayoutNavigationService(IServiceProvider serviceProvider)
         {
             return new LayoutNavigationService<EditorLayoutViewModel>(
                 serviceProvider.GetRequiredService<NavigationStore>(),
@@ -60,7 +61,21 @@ namespace ProjektLavor
                 () => serviceProvider.GetRequiredService<NavigationBarViewModel>()
             );
         }
+        private INavigationService CreateNewTextElementModalNavigationService(IServiceProvider serviceProvider)
+        {
+            return new ModalNavigationService<NewTextElementViewModel>(
+                    serviceProvider.GetRequiredService<ModalNavigationStore>(),
+                    () => new NewTextElementViewModel(
+                        serviceProvider.GetRequiredService<ProjectStore>(),
+                        new CloseModalNavigationService(serviceProvider.GetRequiredService<ModalNavigationStore>())
+                    )
+                );
+        }
 
+        private ToolbarViewModel CreateToolbarViewModel(IServiceProvider serviceProvider)
+        {
+            return new ToolbarViewModel(CreateNewTextElementModalNavigationService(serviceProvider));
+        }
         private NavigationBarViewModel CreateNavigationBarViewModel(IServiceProvider serviceProvider)
         {
             return new NavigationBarViewModel(_serviceProvider);
