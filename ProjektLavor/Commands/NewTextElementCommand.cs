@@ -20,6 +20,8 @@ namespace ProjektLavor.Commands
         public override void Execute(object? parameter)
         {
             _navigationService.Navigate();
+            if (_projectStore.CurrentProject == null || String.IsNullOrEmpty(_viewModel.TextInput)) return;
+            _projectStore.CurrentProject.AddTextNewField(_viewModel.TextInput);
         }
     }
 }

@@ -68,6 +68,14 @@ namespace ProjektLavor.Models
                 y += element.DesiredSize.Height;
             }
         }
+        public void AddTextNewField(string text)
+        {
+            if (Document == null || Document.Pages.Count <= 0) return;
+
+            TextBlock textBlock = new TextBlock();
+            textBlock.Text = text;
+            Document.Pages.Last().Child.Children.Add(textBlock);
+        }
 
         private void FixedPage_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
