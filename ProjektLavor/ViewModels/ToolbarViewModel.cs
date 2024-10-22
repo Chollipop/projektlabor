@@ -6,16 +6,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using ProjektLavor.Stores;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ProjektLavor.ViewModels
 {
     public class ToolbarViewModel : ViewModelBase
     {
         public ICommand OpenNewTextElementModalCommand { get; set; }
+        public ICommand NewImageElementCommand { get; set; }
 
-        public ToolbarViewModel(INavigationService newTextElementNavigationService)
+        public ToolbarViewModel(IServiceProvider serviceProvider)
         {
-            OpenNewTextElementModalCommand = new NavigateCommand(newTextElementNavigationService);
+            ModalNavigationStore modalNavigationStore = serviceProvider.GetService<ModalNavigationStore>();
+            ProjectStore projectStore = serviceProvider.GetRequiredService<ProjectStore>();
+
+            //OpenNewTextElementModalCommand = new NavigateCommand(newTextElementNavigationService);
+            OpenNewTextElementModalCommand = new NavigateCommand(
+                new ModalNavigationService<NewTextElementViewModel>(
+                    modalNavigationStore,
+                    () => new NewTextElementViewModel(
+                        projectStore,
+                        new CloseModalNavigationService(modalNavigationStore)
+                    )
+                ));
+            NewImageElementCommand = new NewImageElementCommand(projectStore);
         }
     }
 }

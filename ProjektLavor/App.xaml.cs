@@ -22,12 +22,13 @@ namespace ProjektLavor
             services.AddSingleton<NavigationStore>();
             services.AddSingleton<ModalNavigationStore>();
             services.AddSingleton<ProjectStore>();
+            services.AddSingleton<SelectedElementStore>();
 
             services.AddSingleton<INavigationService>(x => CreateEditorLayoutNavigationService(x));
 
             services.AddTransient<EditorLayoutViewModel>(x => new EditorLayoutViewModel(
                 CreateToolbarViewModel(x),
-                new EditorViewModel(x.GetRequiredService<ProjectStore>())
+                new EditorViewModel(x.GetRequiredService<ProjectStore>(), x.GetRequiredService<SelectedElementStore>())
                 ));
             services.AddSingleton<NavigationBarViewModel>(CreateNavigationBarViewModel);
             services.AddSingleton<MainViewModel>();
@@ -74,7 +75,8 @@ namespace ProjektLavor
 
         private ToolbarViewModel CreateToolbarViewModel(IServiceProvider serviceProvider)
         {
-            return new ToolbarViewModel(CreateNewTextElementModalNavigationService(serviceProvider));
+            //return new ToolbarViewModel(CreateNewTextElementModalNavigationService(serviceProvider));
+            return new ToolbarViewModel(serviceProvider);
         }
         private NavigationBarViewModel CreateNavigationBarViewModel(IServiceProvider serviceProvider)
         {
