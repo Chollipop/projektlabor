@@ -6,16 +6,36 @@
              xmlns:local="clr-namespace:ProjektLavor.Components"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <DocumentViewer Document="{Binding CurrentDocument}" Zoom="{Binding DocumentZoom}">
-        <DocumentViewer.Resources>
-            <!--Hide Search-->
-            <Style TargetType="ContentControl">
-                <Setter Property="Visibility" Value="Collapsed"/>
-            </Style>
-            <!--Hide toolbar-->
-            <Style TargetType="ToolBar">
-                <Setter Property="Visibility" Value="Collapsed"/>
-            </Style>
-        </DocumentViewer.Resources>
-    </DocumentViewer>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ToolBar Panel.ZIndex="10">
+            <ToolBar.Style>
+                <Style TargetType="ToolBar">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasSelectedItem}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ToolBar.Style>
+            <Button Content="✅" Command="{Binding ApplyPropertiesCommand}"/>
+        </ToolBar>
+        <DocumentViewer Grid.RowSpan="2" Document="{Binding CurrentDocument}" Zoom="{Binding DocumentZoom}">
+            <DocumentViewer.Resources>
+                <!--Hide Search-->
+                <Style TargetType="ContentControl">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+                <!--Hide toolbar-->
+                <Style TargetType="ToolBar">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+            </DocumentViewer.Resources>
+        </DocumentViewer>
+    </Grid>
 </UserControl>

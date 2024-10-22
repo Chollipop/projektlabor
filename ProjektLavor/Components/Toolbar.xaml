@@ -15,7 +15,7 @@
                 </Style>
             </ToolBar.Style>
             <Button Command="{Binding OpenNewTextElementModalCommand}">Add Text</Button>
-            <Button>asd2</Button>
+            <Button Command="{Binding NewImageElementCommand}">Add Image</Button>
             <Button>asd3</Button>
             <Separator/>
             <Button>asd4</Button>

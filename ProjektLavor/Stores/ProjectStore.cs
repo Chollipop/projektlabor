@@ -9,6 +9,8 @@ namespace ProjektLavor.Stores
 {
     public class ProjectStore
     {
+        private SelectedElementStore _selectedElementStore;
+
         public event Action CurrentProjectChanged;
         private Project _currentProject;
         public Project CurrentProject
@@ -21,9 +23,15 @@ namespace ProjektLavor.Stores
                 OnCurrentProjectChanged();
             }
         }
+
+        public ProjectStore(SelectedElementStore selectedElementStore)
+        {
+            _selectedElementStore = selectedElementStore;
+        }
+
         internal void NewProject()
         {
-            CurrentProject = new Project();
+            CurrentProject = new Project(_selectedElementStore);
         }
         internal void CloseProject()
         {
