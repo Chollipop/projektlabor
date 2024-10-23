@@ -24,12 +24,14 @@ namespace ProjektLavor
             thumbTopLeft = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30 };
             thumbBottomRight = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30 };
 
-            thumbTopLeft.Cursor = Cursors.Wait;
-            thumbBottomRight.Cursor = Cursors.Wait;
+            thumbTopLeft.Cursor = Cursors.SizeNWSE;
+            thumbBottomRight.Cursor = Cursors.SizeNWSE;
             AdornerVisuals.Add(thumbTopLeft);
             AdornerVisuals.Add(thumbBottomRight);
 
             thumbTopLeft.DragDelta += ThumbTopLeft_DragDelta;
+            thumbTopRight.DragDelta += ThumbTopRight_DragDelta;
+            thumbBottomLeft.DragDelta += ThumbBottomLeft_DragDelta;
             thumbBottomRight.DragDelta += ThumbBottomRight_DragDelta;
         }
 

@@ -6,26 +6,20 @@
              xmlns:local="clr-namespace:ProjektLavor.Components"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <ToolBar Panel.ZIndex="10">
-            <ToolBar.Style>
-                <Style TargetType="ToolBar">
-                    <Setter Property="Visibility" Value="Visible"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding HasSelectedItem}" Value="False">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ToolBar.Style>
-            <Button Content="✅" Command="{Binding ApplyPropertiesCommand}"/>
-        </ToolBar>
-        <DocumentViewer Grid.RowSpan="2" Document="{Binding CurrentDocument}" Zoom="{Binding DocumentZoom}">
+        <local:PropertiesPanel Grid.Column="1" Panel.ZIndex="10"
+                               DataContext="{Binding PropertiesPanelViewModel}"
+                               Visibility="{Binding DataContext.HasSelectedItem,RelativeSource={RelativeSource AncestorType={x:Type local:Editor}},Converter={StaticResource BooleanToVisibilityConverter}}">
+        </local:PropertiesPanel>
+        <DocumentViewer Grid.ColumnSpan="2" Document="{Binding CurrentDocument}" Zoom="{Binding DocumentZoom}">
             <DocumentViewer.Resources>
                 <!--Hide Search-->
                 <Style TargetType="ContentControl">

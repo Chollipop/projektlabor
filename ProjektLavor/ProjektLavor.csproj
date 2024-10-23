@@ -15,13 +15,17 @@
 
   <ItemGroup>
     <None Remove="Assets\coconut.jpg" />
+    <None Remove="Assets\Icons\bold.png" />
     <None Remove="Assets\Icons\close.png" />
     <None Remove="Assets\Icons\diskette.png" />
+    <None Remove="Assets\Icons\flip.png" />
     <None Remove="Assets\Icons\folder.png" />
+    <None Remove="Assets\Icons\italic.png" />
     <None Remove="Assets\Icons\new-document.png" />
     <None Remove="Assets\Icons\printing.png" />
     <None Remove="Assets\Icons\redo.png" />
     <None Remove="Assets\Icons\share.png" />
+    <None Remove="Assets\Icons\underline.png" />
     <None Remove="Assets\Icons\undo.png" />
   </ItemGroup>
 
@@ -37,13 +41,22 @@
     <Resource Include="Assets\coconut.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\bold.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\close.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\diskette.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\flip.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\folder.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\italic.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\new-document.png">
@@ -56,6 +69,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\share.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\underline.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\undo.png">

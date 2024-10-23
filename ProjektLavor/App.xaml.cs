@@ -35,7 +35,8 @@ namespace ProjektLavor
 
             services.AddSingleton<MainWindow>(x => new MainWindow()
             {
-                DataContext = x.GetRequiredService<MainViewModel>()
+                DataContext = x.GetRequiredService<MainViewModel>(),
+                WindowState = WindowState.Maximized
             });
 
             _serviceProvider = services.BuildServiceProvider();
