@@ -12,7 +12,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" MinWidth="155"/>
         </Grid.ColumnDefinitions>
 
         <local:PropertiesPanel Grid.Column="1" Panel.ZIndex="10"
@@ -26,9 +26,9 @@
                     <Setter Property="Visibility" Value="Collapsed"/>
                 </Style>
                 <!--Hide toolbar-->
-                <Style TargetType="ToolBar">
+                <!--<Style TargetType="ToolBar">
                     <Setter Property="Visibility" Value="Collapsed"/>
-                </Style>
+                </Style>-->
             </DocumentViewer.Resources>
         </DocumentViewer>
     </Grid>
