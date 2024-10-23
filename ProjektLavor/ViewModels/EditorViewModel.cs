@@ -17,6 +17,18 @@ namespace ProjektLavor.ViewModels
     {
         private ProjectStore _projectStore;
         private SelectedElementStore _selectedElementStore;
+        private PropertiesPanelViewModel _propertiesPanelViewModel;
+        public PropertiesPanelViewModel PropertiesPanelViewModel
+        {
+            get => _propertiesPanelViewModel;
+            set
+            {
+                _propertiesPanelViewModel?.Dispose();
+                _propertiesPanelViewModel = value;
+                OnPropertyChanged(nameof(PropertiesPanelViewModel));
+            }
+        }
+
         public FixedDocument CurrentDocument => _projectStore.CurrentProject?.Document;
         public bool HasSelectedItem => _selectedElementStore?.SelectedElement != null;
 
@@ -37,6 +49,8 @@ namespace ProjektLavor.ViewModels
         private void _selectedElementStore_SelectedElementChanged()
         {
             OnPropertyChanged(nameof(HasSelectedItem));
+            if(HasSelectedItem)
+                PropertiesPanelViewModel = new PropertiesPanelViewModel(_selectedElementStore.SelectedElement);
         }
 
         private void _projectStore_CurrentProjectChanged()

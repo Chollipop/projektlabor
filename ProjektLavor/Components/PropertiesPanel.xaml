@@ -1,0 +1,107 @@
+﻿<UserControl x:Class="ProjektLavor.Components.PropertiesPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ProjektLavor.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <StackPanel Orientation="Vertical" Background="LightGray">
+        <!--#region Rotate -->
+        <DockPanel Margin="5 5 5 0">
+            <Label DockPanel.Dock="Left" Content="Forgatás:"/>
+            <Label DockPanel.Dock="Right" Content="fok"/>
+            <TextBox Text="{Binding RotationDegre,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+        </DockPanel>
+        <!--#endregion-->
+        <!--#region Mirror -->
+        <Grid Margin="5 10 5 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Grid.ColumnSpan="2" Content="Tükrözés" HorizontalContentAlignment="Center"/>
+            <Button Grid.Row="1" Grid.Column="0" Margin="5" BorderThickness="0" MaxWidth="100" Command="{Binding VerticalMirrorCommand}">
+                <Image Source="/Assets/Icons/flip.png" Stretch="UniformToFill"/>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="1" Margin="5" BorderThickness="0" MaxWidth="100" Command="{Binding HorizontalMirrorCommand}">
+                <Image Source="/Assets/Icons/flip.png" Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5">
+                    <Image.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="90"/>
+                        </TransformGroup>
+                    </Image.RenderTransform>
+                </Image>
+            </Button>
+        </Grid>
+        <!--#endregion-->
+        <!--#region Resize -->
+        <Grid Margin="5 10 5 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.ColumnSpan="3" Content="Átméretezés" HorizontalContentAlignment="Center"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Szélesség:"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ResizeWidthPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Grid.Row="1" Grid.Column="2" Content="%"/>
+
+            <Label Grid.Row="2" Grid.Column="0" Content="Magasság:"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ResizeHeightPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Grid.Row="2" Grid.Column="2" Content="%"/>
+
+            <Label Margin="0 5 0 0" Grid.Row="3" Grid.Column="0" Content="Szélesség:"/>
+            <TextBox Margin="0 5 0 0" Grid.Row="3" Grid.Column="1" Text="{Binding ResizeWidth,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Margin="0 5 0 0" Grid.Row="3" Grid.Column="2" Content="px"/>
+
+            <Label Grid.Row="4" Grid.Column="0" Content="Magasság:"/>
+            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ResizeHeight,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Grid.Row="4" Grid.Column="2" Content="px"/>
+
+            <CheckBox Margin="0 5 0 0" Grid.Row="5" Grid.ColumnSpan="3" HorizontalAlignment="Center" Content="Méretarány megtartása" IsChecked="True"/>
+        </Grid>
+        <!--#endregion-->
+        <!--#region Font -->
+        <Grid Margin="5 15 5 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="50"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <ComboBox Grid.Row="0" Grid.ColumnSpan="4" ItemsSource="{Binding AvailableFonts}" SelectedItem="{Binding SelectedFont}"/>
+
+            <ComboBox Grid.Row="1" Grid.Column="0" Margin="0 5" MinWidth="50" ItemsSource="{Binding AvailableFontSizes}" SelectedItem="{Binding SelectedFontSize}"/>
+            <Button Grid.Row="1" Grid.Column="1" Margin="2" MaxWidth="35" BorderThickness="0" Background="Transparent" Command="{Binding ToggleBoldCommand}">
+                <Image Source="/Assets/Icons/bold.png" Stretch="UniformToFill"/>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="2" Margin="2" MaxWidth="35" BorderThickness="0" Background="Transparent" Command="{Binding ToggleItalicCommand}">
+                <Image Source="/Assets/Icons/italic.png" Stretch="UniformToFill"/>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="3" Margin="2" MaxWidth="35"  BorderThickness="0" Background="Transparent" Command="{Binding ToggleUnderlineCommand}">
+                <Image Source="/Assets/Icons/underline.png" Stretch="UniformToFill"/>
+            </Button>
+        </Grid>
+        <!--#endregion-->
+    </StackPanel>
+</UserControl>
