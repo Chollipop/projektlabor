@@ -116,6 +116,7 @@ namespace ProjektLavor.Models
                 adornerLayer.Remove(adorner);
             }
         }
+        #region ELEMENT MOVING
         private void FixedPage_MouseDown(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
@@ -151,8 +152,8 @@ namespace ProjektLavor.Models
 
             FixedPage.SetLeft(_selectedElementStore.SelectedElement, x);
             FixedPage.SetTop(_selectedElementStore.SelectedElement, y);
-        }
-
+        } 
+        #endregion
 
         public void Dispose()
         {

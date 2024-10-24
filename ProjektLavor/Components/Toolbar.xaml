@@ -6,20 +6,110 @@
              xmlns:local="clr-namespace:ProjektLavor.Components"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <!--#region TOOLBAR PLACEHOLDER-->
-        <ToolBar>
-            <ToolBar.Style>
-                <Style TargetType="ToolBar">
-                    <Setter Property="Background" Value="Transparent"/>
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!--#region ColorPicker -->
+        <Grid Grid.Column="0" HorizontalAlignment="Center">
+            <Grid.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
-            </ToolBar.Style>
-            <Button Command="{Binding OpenNewTextElementModalCommand}">Add Text</Button>
-            <Button Command="{Binding NewImageElementCommand}">Add Image</Button>
-            <Button>asd3</Button>
-            <Separator/>
-            <Button>asd4</Button>
-        </ToolBar>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Button Grid.Column="0" Grid.Row="0" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="White"/>
+            <Button Grid.Column="1" Grid.Row="0" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="Black"/>
+            <Button Grid.Column="0" Grid.Row="1" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="LightGray"/>
+            <Button Grid.Column="1" Grid.Row="1" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="Gray"/>
+            <Button Grid.Column="0" Grid.Row="2" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="Pink"/>
+            <Button Grid.Column="1" Grid.Row="2" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="HotPink"/>
+            <Button Grid.Column="0" Grid.Row="3" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="Peru"/>
+            <Button Grid.Column="1" Grid.Row="3" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="Red"/>
+            <Button Grid.Column="0" Grid.Row="4" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="Yellow"/>
+            <Button Grid.Column="1" Grid.Row="4" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="Orange"/>
+            <Button Grid.Column="0" Grid.Row="5" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="Lime"/>
+            <Button Grid.Column="1" Grid.Row="5" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="Green"/>
+            <Button Grid.Column="0" Grid.Row="6" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="LightBlue"/>
+            <Button Grid.Column="1" Grid.Row="6" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="Blue"/>
+            <Button Grid.Column="0" Grid.Row="7" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="Violet"/>
+            <Button Grid.Column="1" Grid.Row="7" Width="25" Height="25" Margin="2" BorderBrush="Black" BorderThickness="1" Command="{Binding ChangeColorCommand}" Background="DarkViolet"/>
+            <Border Grid.Column="0" Grid.Row="8" Width="50" Height="50" Margin="2" Grid.ColumnSpan="2" BorderBrush="Black" BorderThickness="1">
+                <Button>
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,0">
+                            <GradientStop Color="Red" Offset="0"/>
+                            <GradientStop Color="Red" Offset="1"/>
+                            <GradientStop Color="#FFFDFF00" Offset="0.166"/>
+                            <GradientStop Color="#FF36FF00" Offset="0.334"/>
+                            <GradientStop Color="#FF00FFF9" Offset="0.499"/>
+                            <GradientStop Color="#FF0031FF" Offset="0.665"/>
+                            <GradientStop Color="#FFFF00F5" Offset="0.831"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                    <Button.OpacityMask>
+                        <LinearGradientBrush EndPoint="0,1">
+                            <GradientStop Color="Black" Offset="0"/>
+                            <GradientStop Color="#4C000000" Offset="0.66"/>
+                            <GradientStop Color="#0C000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.OpacityMask>
+                </Button>
+            </Border>
+        </Grid>
+        <!--#endregion-->
+
+        <!--#region Buttons -->
+        <StackPanel Grid.Column="1" Margin="5" Orientation="Vertical">
+            <Button Command="{Binding NewImageElementCommand}">
+                <Image MaxWidth="50" Source="/Assets/Icons/image.png" Stretch="UniformToFill" />
+            </Button>
+            <Button Command="{Binding OpenNewFrameModalCommand}">
+                <Image MaxWidth="50" Source="/Assets/Icons/frame.png" Stretch="UniformToFill" />
+            </Button>
+            <Button Command="{Binding OpenNewTextElementModalCommand}">
+                <Image MaxWidth="50" Source="/Assets/Icons/text.png" Stretch="UniformToFill" />
+            </Button>
+            <Button Command="{Binding OpenNewTextBubbleModalCommand}">
+                <Image MaxWidth="50" Source="/Assets/Icons/chat.png" Stretch="UniformToFill" />
+            </Button>
+        </StackPanel>
         <!--#endregion-->
     </Grid>
 </UserControl>

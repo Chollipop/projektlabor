@@ -13,8 +13,12 @@ namespace ProjektLavor.ViewModels
 {
     public class ToolbarViewModel : ViewModelBase
     {
-        public ICommand OpenNewTextElementModalCommand { get; set; }
+        public ICommand ChangeColorCommand { get; set; }
+
         public ICommand NewImageElementCommand { get; set; }
+        public ICommand OpenNewFrameModalCommand { get; set; }
+        public ICommand OpenNewTextElementModalCommand { get; set; }
+        public ICommand OpenNewTextBubbleModalCommand { get; set; }
 
         public ToolbarViewModel(IServiceProvider serviceProvider)
         {
@@ -25,7 +29,7 @@ namespace ProjektLavor.ViewModels
             OpenNewTextElementModalCommand = new NavigateCommand(
                 new ModalNavigationService<NewTextElementViewModel>(
                     modalNavigationStore,
-                    () => new NewTextElementViewModel(
+                    () => projectStore.CurrentProject == null ? null : new NewTextElementViewModel(
                         projectStore,
                         new CloseModalNavigationService(modalNavigationStore)
                     )
