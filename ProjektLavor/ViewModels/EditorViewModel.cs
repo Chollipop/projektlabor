@@ -43,10 +43,8 @@ namespace ProjektLavor.ViewModels
 
         public int DocumentZoom { get; set; } = 80;
 
-
         private bool IsDragging = false;
         private Point PointerOffsetInElement;
-
 
         public EditorViewModel(IServiceProvider serviceProvider)
         {
@@ -66,19 +64,18 @@ namespace ProjektLavor.ViewModels
         {
             if (e.LastValue == null) return;
             DetachResizeAdorner(e.LastValue);
-            if(e.LastValue.GetType() == typeof(TextBlock))
+            if (e.LastValue.GetType() == typeof(TextBlock))
                 e.LastValue.MouseDown -= TextBlock_MouseDown;
-
         }
 
         private void _selectedElementStore_SelectedElementChanged()
         {
             OnPropertyChanged(nameof(HasSelectedItem));
             if (!HasSelectedItem) return;
-            
+
             PropertiesPanelViewModel = new PropertiesPanelViewModel(_selectedElementStore.SelectedElement);
-            
-            if(_selectedElementStore.SelectedElement.GetType() == typeof(TextBlock))
+
+            if (_selectedElementStore.SelectedElement.GetType() == typeof(TextBlock))
             {
                 TextBlock textBlock = _selectedElementStore.SelectedElement as TextBlock;
                 textBlock.MouseDown += TextBlock_MouseDown;
@@ -109,6 +106,7 @@ namespace ProjektLavor.ViewModels
             e.Handled = true;
             if (e.OriginalSource.GetType() == typeof(FixedPage))
             {
+                _projectStore.CurrentProject.SetActivePage(sender as FixedPage);
                 _selectedElementStore.Select(null);
                 return;
             }
@@ -118,14 +116,17 @@ namespace ProjektLavor.ViewModels
             PointerOffsetInElement = e.GetPosition(element);
             IsDragging = true;
             _selectedElementStore.Select(element);
-            
+
             ReattachResizeAdorner(element);
+            
         }
+
         private void FixedPage_MouseUp(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
             IsDragging = false;
         }
+
         private void FixedPage_MouseMove(object sender, MouseEventArgs e)
         {
             e.Handled = true;
@@ -175,6 +176,7 @@ namespace ProjektLavor.ViewModels
                 adornerLayer.Remove(adorner);
             }
         }
+
         private void ReattachResizeAdorner(FrameworkElement element)
         {
             DetachResizeAdorner(element);
@@ -186,13 +188,14 @@ namespace ProjektLavor.ViewModels
             OnPropertyChanged(nameof(CurrentDocument));
             if (CurrentDocument == null) return;
 
-            foreach(PageContent pageContent in CurrentDocument.Pages)
+            foreach (PageContent pageContent in CurrentDocument.Pages)
             {
                 pageContent.Child.MouseDown += FixedPage_MouseDown;
                 pageContent.Child.MouseUp += FixedPage_MouseUp;
                 pageContent.Child.MouseMove += FixedPage_MouseMove;
             }
         }
+
         private void _projectStore_NewPageAdded(PageContent pageContent)
         {
             pageContent.Child.MouseDown += FixedPage_MouseDown;
@@ -212,7 +215,6 @@ namespace ProjektLavor.ViewModels
             _projectStore.CurrentProjectChanged -= _projectStore_CurrentProjectChanged;
             _selectedElementStore.PreviewSelectedElementChanged -= _selectedElementStore_PreviewSelectedElementChanged;
             _selectedElementStore.SelectedElementChanged -= _selectedElementStore_SelectedElementChanged;
-            
         }
     }
 }

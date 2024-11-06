@@ -10,12 +10,16 @@ using ProjektLavor.Stores;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Media;
 using System.Windows.Documents;
+using System.Reflection.Metadata;
+using System.Windows.Controls;
+using System.Data.Common;
 
 namespace ProjektLavor.ViewModels
 {
     public class ToolbarViewModel : ViewModelBase
     {
         private ProjectStore _projectStore;
+        private SelectedElementStore _selectedElementStore;
 
         public ICommand ChangeColorCommand { get; set; }
 
@@ -35,11 +39,17 @@ namespace ProjektLavor.ViewModels
                 _selectedCustomColor = value;
                 if (_projectStore?.CurrentProject?.Document == null || value == null) return;
 
-                foreach (PageContent pageContent in _projectStore.CurrentProject.Document.Pages)
+                var activePage = _projectStore.CurrentProject.ActivePage;
+                var selectedElement = _selectedElementStore.SelectedElement;
+
+                if (selectedElement != null && selectedElement.GetType() == typeof(TextBlock))
                 {
-                    pageContent.Child.Background = new SolidColorBrush(value.Value);
+                    ((TextBlock)selectedElement).Foreground = new SolidColorBrush(value.Value);
                 }
-                //OnPropertyChanged(nameof(SelectedCustomColor));
+                else if (activePage != null)
+                {
+                    activePage.Background = new SolidColorBrush(value.Value);
+                }
             }
         }
 
@@ -47,8 +57,9 @@ namespace ProjektLavor.ViewModels
         {
             ModalNavigationStore modalNavigationStore = serviceProvider.GetRequiredService<ModalNavigationStore>();
             _projectStore = serviceProvider.GetRequiredService<ProjectStore>();
+            _selectedElementStore = serviceProvider.GetRequiredService<SelectedElementStore>();
 
-            ChangeColorCommand = new ChangeColorCommand(_projectStore);
+            ChangeColorCommand = new ChangeColorCommand(_projectStore, _selectedElementStore);
 
             //OpenNewTextElementModalCommand = new NavigateCommand(newTextElementNavigationService);
             OpenNewTextElementModalCommand = new NavigateCommand(

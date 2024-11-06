@@ -10,7 +10,7 @@ namespace ProjektLavor.Components
     /// </summary>
     public partial class PropertiesPanel : UserControl
     {
-        private static readonly Regex _regex = new Regex("[^0-9.-]+");
+        private static readonly Regex _regex = new Regex("[^0-9-]+");
 
         public PropertiesPanel()
         {

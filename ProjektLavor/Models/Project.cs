@@ -19,6 +19,8 @@ namespace ProjektLavor.Models
         private SelectedElementStore _selectedElementStore;
 
         public FixedDocument Document { get; set; }
+        public FixedPage ActivePage { get; private set; }
+
 
         public Project(SelectedElementStore selectedElementStore)
         {
@@ -80,6 +82,11 @@ namespace ProjektLavor.Models
             image.Cursor = Cursors.SizeAll;
 
             return image;
+        }
+
+        public void SetActivePage(FixedPage page)
+        {
+            ActivePage = page;
         }
 
         public void Dispose()
