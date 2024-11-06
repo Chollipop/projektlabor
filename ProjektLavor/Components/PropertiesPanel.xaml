@@ -17,7 +17,7 @@
         <DockPanel Margin="5 5 5 0">
             <Label DockPanel.Dock="Left" Content="Forgatás:"/>
             <Label DockPanel.Dock="Right" Content="fok"/>
-            <TextBox Text="{Binding RotationDegre,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Text="{Binding RotationDegree,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
         </DockPanel>
         <!--#endregion-->
         <!--#region Mirror -->
