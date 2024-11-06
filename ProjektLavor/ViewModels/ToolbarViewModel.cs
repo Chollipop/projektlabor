@@ -22,14 +22,14 @@ namespace ProjektLavor.ViewModels
 
         public ToolbarViewModel(IServiceProvider serviceProvider)
         {
-            ModalNavigationStore modalNavigationStore = serviceProvider.GetService<ModalNavigationStore>();
+            ModalNavigationStore modalNavigationStore = serviceProvider.GetRequiredService<ModalNavigationStore>();
             ProjectStore projectStore = serviceProvider.GetRequiredService<ProjectStore>();
 
             //OpenNewTextElementModalCommand = new NavigateCommand(newTextElementNavigationService);
             OpenNewTextElementModalCommand = new NavigateCommand(
-                new ModalNavigationService<NewTextElementViewModel>(
+                new ModalNavigationService<TextElementInputViewModel>(
                     modalNavigationStore,
-                    () => projectStore.CurrentProject == null ? null : new NewTextElementViewModel(
+                    () => projectStore.CurrentProject == null ? null : new TextElementInputViewModel(
                         projectStore,
                         new CloseModalNavigationService(modalNavigationStore)
                     )

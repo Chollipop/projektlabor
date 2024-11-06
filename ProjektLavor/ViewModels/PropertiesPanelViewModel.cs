@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ProjektLavor.ViewModels
 {
@@ -14,6 +16,9 @@ namespace ProjektLavor.ViewModels
         private FrameworkElement _element;
         private double resizeWidth;
         private double resizeHeight;
+
+        private bool isFontChangeAvailable;
+        public bool IsFontChangeAvailable => _element.GetType() == typeof(TextBlock);
 
         private DependencyPropertyDescriptor WidthDependencyPropertyDescriptor;
         
@@ -63,6 +68,10 @@ namespace ProjektLavor.ViewModels
             _element = element;
             WidthDependencyPropertyDescriptor = DependencyPropertyDescriptor.FromProperty(FrameworkElement.WidthProperty, typeof(FrameworkElement));
             WidthDependencyPropertyDescriptor.AddValueChanged(_element, UpdateValues);
+
+            AvailableFonts = Fonts.SystemFontFamilies.Select(x => x.Source).ToList();
+            OnPropertyChanged(nameof(AvailableFonts));
+
             UpdateValues(null, null);
         }
 

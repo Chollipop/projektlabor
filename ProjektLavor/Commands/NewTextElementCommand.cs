@@ -6,11 +6,11 @@ namespace ProjektLavor.Commands
 {
     public class NewTextElementCommand : CommandBase
     {
-        private readonly NewTextElementViewModel _viewModel;
+        private readonly TextElementInputViewModel _viewModel;
         private readonly ProjectStore _projectStore;
         private readonly INavigationService _navigationService;
 
-        public NewTextElementCommand(NewTextElementViewModel viewModel, ProjectStore projectStore, INavigationService navigationService)
+        public NewTextElementCommand(TextElementInputViewModel viewModel, ProjectStore projectStore, INavigationService navigationService)
         {
             _viewModel = viewModel;
             _projectStore = projectStore;

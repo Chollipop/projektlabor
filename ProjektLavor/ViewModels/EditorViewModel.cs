@@ -1,4 +1,7 @@
-﻿using ProjektLavor.Commands;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ProjektLavor.Commands;
+using ProjektLavor.Components;
+using ProjektLavor.Services;
 using ProjektLavor.Stores;
 using System;
 using System.Collections.Generic;
@@ -8,6 +11,7 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -19,6 +23,8 @@ namespace ProjektLavor.ViewModels
         private ProjectStore _projectStore;
         private SelectedElementStore _selectedElementStore;
         private PropertiesPanelViewModel _propertiesPanelViewModel;
+        private ModalNavigationStore _modalNavigationStore;
+
         public PropertiesPanelViewModel PropertiesPanelViewModel
         {
             get => _propertiesPanelViewModel;
@@ -42,10 +48,12 @@ namespace ProjektLavor.ViewModels
         private Point PointerOffsetInElement;
 
 
-        public EditorViewModel(ProjectStore projectStore, SelectedElementStore selectedElementStore)
+        public EditorViewModel(IServiceProvider serviceProvider)
         {
-            _projectStore = projectStore;
-            _selectedElementStore = selectedElementStore;
+            _projectStore = serviceProvider.GetRequiredService<ProjectStore>();
+            _selectedElementStore = serviceProvider.GetRequiredService<SelectedElementStore>();
+            _modalNavigationStore = serviceProvider.GetRequiredService<ModalNavigationStore>();
+
             _projectStore.NewPageAdded += _projectStore_NewPageAdded;
             _projectStore.CurrentProjectChanged += _projectStore_CurrentProjectChanged;
             _selectedElementStore.PreviewSelectedElementChanged += _selectedElementStore_PreviewSelectedElementChanged;
@@ -58,13 +66,41 @@ namespace ProjektLavor.ViewModels
         {
             if (e.LastValue == null) return;
             DetachResizeAdorner(e.LastValue);
+            if(e.LastValue.GetType() == typeof(TextBlock))
+                e.LastValue.MouseDown -= TextBlock_MouseDown;
+
         }
 
         private void _selectedElementStore_SelectedElementChanged()
         {
             OnPropertyChanged(nameof(HasSelectedItem));
-            if(HasSelectedItem)
-                PropertiesPanelViewModel = new PropertiesPanelViewModel(_selectedElementStore.SelectedElement);
+            if (!HasSelectedItem) return;
+            
+            PropertiesPanelViewModel = new PropertiesPanelViewModel(_selectedElementStore.SelectedElement);
+            
+            if(_selectedElementStore.SelectedElement.GetType() == typeof(TextBlock))
+            {
+                TextBlock textBlock = _selectedElementStore.SelectedElement as TextBlock;
+                textBlock.MouseDown += TextBlock_MouseDown;
+            }
+        }
+
+        private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount != 2) return;
+
+            e.Handled = true;
+            IsDragging = false;
+
+            new NavigateCommand(
+                new ModalNavigationService<TextElementInputViewModel>(
+                    _modalNavigationStore,
+                    () => _projectStore.CurrentProject == null ? null : new TextElementInputViewModel(
+                        _projectStore,
+                        new CloseModalNavigationService(_modalNavigationStore),
+                        sender as TextBlock
+                    )
+            )).Execute(null);
         }
 
         #region ELEMENT MOVING
