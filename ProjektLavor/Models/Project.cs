@@ -66,7 +66,8 @@ namespace ProjektLavor.Models
         {
             TextBlock textBlock = new TextBlock();
             textBlock.Text = text;
-            textBlock.TextWrapping = TextWrapping.Wrap;
+            textBlock.TextWrapping = TextWrapping.WrapWithOverflow;
+            textBlock.ClipToBounds = true;
             textBlock.Cursor = Cursors.SizeAll;
 
             return textBlock;
