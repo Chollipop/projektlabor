@@ -7,6 +7,7 @@ using System.Printing;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -36,14 +37,27 @@ namespace ProjektLavor.ViewModels
 
         public int DocumentZoom { get; set; } = 80;
 
+
+        private bool IsDragging = false;
+        private Point PointerOffsetInElement;
+
+
         public EditorViewModel(ProjectStore projectStore, SelectedElementStore selectedElementStore)
         {
             _projectStore = projectStore;
             _selectedElementStore = selectedElementStore;
+            _projectStore.NewPageAdded += _projectStore_NewPageAdded;
             _projectStore.CurrentProjectChanged += _projectStore_CurrentProjectChanged;
+            _selectedElementStore.PreviewSelectedElementChanged += _selectedElementStore_PreviewSelectedElementChanged;
             _selectedElementStore.SelectedElementChanged += _selectedElementStore_SelectedElementChanged;
 
             ApplyPropertiesCommand = new ApplyPropertiesCommand(_selectedElementStore);
+        }
+
+        private void _selectedElementStore_PreviewSelectedElementChanged(object sender, PreviewSelectedElementChangedEventArgs e)
+        {
+            if (e.LastValue == null) return;
+            DetachResizeAdorner(e.LastValue);
         }
 
         private void _selectedElementStore_SelectedElementChanged()
@@ -53,15 +67,116 @@ namespace ProjektLavor.ViewModels
                 PropertiesPanelViewModel = new PropertiesPanelViewModel(_selectedElementStore.SelectedElement);
         }
 
+        #region ELEMENT MOVING
+        private void FixedPage_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            if (e.OriginalSource.GetType() == typeof(FixedPage))
+            {
+                _selectedElementStore.Select(null);
+                return;
+            }
+
+            FixedPage fixedPage = (FixedPage)sender;
+            FrameworkElement element = (FrameworkElement)e.OriginalSource;
+            PointerOffsetInElement = e.GetPosition(element);
+            IsDragging = true;
+            _selectedElementStore.Select(element);
+            
+            ReattachResizeAdorner(element);
+        }
+        private void FixedPage_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            IsDragging = false;
+        }
+        private void FixedPage_MouseMove(object sender, MouseEventArgs e)
+        {
+            e.Handled = true;
+            if (!IsDragging || _selectedElementStore.SelectedElement == null) return;
+
+            FixedPage fixedPage = (FixedPage)sender;
+            foreach (PageContent pageContent in _projectStore.CurrentProject.Document.Pages)
+            {
+                FixedPage fixedPageElement = pageContent.Child;
+                Point posToElement = Mouse.GetPosition(pageContent.Child);
+                if (posToElement.X > 0 && posToElement.X < fixedPageElement.Width &&
+                    posToElement.Y > 0 && posToElement.Y < fixedPageElement.Height)
+                {
+                    fixedPage = fixedPageElement;
+                    break;
+                }
+            }
+            if (fixedPage != _selectedElementStore.SelectedElement.Parent)
+            {
+                DetachResizeAdorner(_selectedElementStore.SelectedElement);
+                FixedPage oldParent = _selectedElementStore.SelectedElement.Parent as FixedPage;
+                if (oldParent != null)
+                {
+                    oldParent.Children.Remove(_selectedElementStore.SelectedElement);
+                }
+                fixedPage.Children.Add(_selectedElementStore.SelectedElement);
+                ReattachResizeAdorner(_selectedElementStore.SelectedElement);
+            }
+            Point cPos = Mouse.GetPosition(fixedPage);
+
+            double x = cPos.X - PointerOffsetInElement.X;
+            double y = cPos.Y - PointerOffsetInElement.Y;
+            FixedPage.SetLeft(_selectedElementStore.SelectedElement, x);
+            FixedPage.SetTop(_selectedElementStore.SelectedElement, y);
+        }
+        #endregion
+
+        private void DetachResizeAdorner(FrameworkElement element)
+        {
+            AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(element);
+            UIElement[] adorners = adornerLayer.GetAdorners(element);
+
+            if (adorners == null) return;
+
+            foreach (Adorner adorner in adorners)
+            {
+                adornerLayer.Remove(adorner);
+            }
+        }
+        private void ReattachResizeAdorner(FrameworkElement element)
+        {
+            DetachResizeAdorner(element);
+            AdornerLayer.GetAdornerLayer(element).Add(new ResizeAdorner(element));
+        }
+
         private void _projectStore_CurrentProjectChanged()
         {
             OnPropertyChanged(nameof(CurrentDocument));
+            if (CurrentDocument == null) return;
+
+            foreach(PageContent pageContent in CurrentDocument.Pages)
+            {
+                pageContent.Child.MouseDown += FixedPage_MouseDown;
+                pageContent.Child.MouseUp += FixedPage_MouseUp;
+                pageContent.Child.MouseMove += FixedPage_MouseMove;
+            }
+        }
+        private void _projectStore_NewPageAdded(PageContent pageContent)
+        {
+            pageContent.Child.MouseDown += FixedPage_MouseDown;
+            pageContent.Child.MouseUp += FixedPage_MouseUp;
+            pageContent.Child.MouseMove += FixedPage_MouseMove;
         }
 
         public override void Dispose()
         {
+            foreach (PageContent pageContent in CurrentDocument.Pages)
+            {
+                pageContent.Child.MouseDown -= FixedPage_MouseDown;
+                pageContent.Child.MouseUp -= FixedPage_MouseUp;
+                pageContent.Child.MouseMove -= FixedPage_MouseMove;
+            }
+            _projectStore.NewPageAdded -= _projectStore_NewPageAdded;
             _projectStore.CurrentProjectChanged -= _projectStore_CurrentProjectChanged;
+            _selectedElementStore.PreviewSelectedElementChanged -= _selectedElementStore_PreviewSelectedElementChanged;
             _selectedElementStore.SelectedElementChanged -= _selectedElementStore_SelectedElementChanged;
+            
         }
     }
 }

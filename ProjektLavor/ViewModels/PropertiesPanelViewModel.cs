@@ -17,7 +17,15 @@ namespace ProjektLavor.ViewModels
 
         private DependencyPropertyDescriptor WidthDependencyPropertyDescriptor;
         
-        public double RotationDegre { get; set; }
+        private double rotationDegree;
+        public double RotationDegree
+        {
+            get { return rotationDegree; }
+            set
+            {
+                rotationDegree = value;
+            }
+        }
         public ICommand VerticalMirrorCommand { get; set; }
         public ICommand HorizontalMirrorCommand { get; set; }
 
@@ -60,7 +68,7 @@ namespace ProjektLavor.ViewModels
 
         private void UpdateValues(object? sender, EventArgs e)
         {
-            resizeWidth = _element.Width;
+            ResizeWidth = _element.Width;
             ResizeHeight = _element.Height;
         }
         public override void Dispose()

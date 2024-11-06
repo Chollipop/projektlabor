@@ -69,6 +69,11 @@
             <MenuItem Header="Kilépés" Command="{Binding ExitApplicationCommand}"/>
         </MenuItem>
         <MenuItem Grid.Column="1" Header="Szerkesztés">
+            <MenuItem Header="Új oldal" Command="{Binding NewPageCommand}">
+                <MenuItem.Icon>
+                    <Image />
+                </MenuItem.Icon>
+            </MenuItem>
         </MenuItem>
         <MenuItem Grid.Column="2" Command="{Binding SaveProjectCommand}">
             <MenuItem.Icon>

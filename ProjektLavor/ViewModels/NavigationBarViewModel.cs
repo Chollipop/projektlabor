@@ -20,6 +20,8 @@ namespace ProjektLavor.ViewModels
         public ICommand SaveAsProjectCommand { get; }
         public ICommand CloseProjectCommand { get; }
 
+        public ICommand NewPageCommand { get; }
+
         public ICommand UndoCommand { get; }
         public ICommand RedoCommand { get; }
 
@@ -33,6 +35,8 @@ namespace ProjektLavor.ViewModels
             //SaveProjectCommand = new SaveProjectCommand();
             //SaveAsProjectCommand = new SaveAsProjectCommand();
             CloseProjectCommand = new CloseProjectCommand(projectStore);
+
+            NewPageCommand = new NewPageCommand(projectStore);
 
             //UndoCommand = new UndoCommand();
             //RedoCommand = new RedoCommand();
