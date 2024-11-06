@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace ProjektLavor.Stores
 {
@@ -11,6 +12,8 @@ namespace ProjektLavor.Stores
     {
         private SelectedElementStore _selectedElementStore;
 
+        public delegate void NewPageAddedEventHandler(PageContent pageContent);
+        public event NewPageAddedEventHandler NewPageAdded;
         public event Action CurrentProjectChanged;
         private Project _currentProject;
         public Project CurrentProject
@@ -29,13 +32,21 @@ namespace ProjektLavor.Stores
             _selectedElementStore = selectedElementStore;
         }
 
-        internal void NewProject()
+        public void NewProject()
         {
             CurrentProject = new Project(_selectedElementStore);
+#if DEBUG
+            CurrentProject.AddTestElements();
+#endif
         }
-        internal void CloseProject()
+        public void CloseProject()
         {
             CurrentProject = null;
+        }
+        public void NewPage()
+        {
+            PageContent newPage = _currentProject.AddBlankPage();
+            NewPageAdded?.Invoke(newPage);
         }
 
 
