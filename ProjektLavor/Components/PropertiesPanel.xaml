@@ -17,7 +17,7 @@
         <DockPanel Margin="5 5 5 0">
             <Label DockPanel.Dock="Left" Content="Forgatás:"/>
             <Label DockPanel.Dock="Right" Content="fok"/>
-            <TextBox Text="{Binding RotationDegree,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Text="{Binding RotationDegree,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
         </DockPanel>
         <!--#endregion-->
         <!--#region Mirror -->
@@ -62,24 +62,24 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <Label Grid.ColumnSpan="3" Content="Átméretezés" HorizontalContentAlignment="Center"/>
+            <!--<Label Grid.ColumnSpan="3" Content="Átméretezés" HorizontalContentAlignment="Center"/>
             <Label Grid.Row="1" Grid.Column="0" Content="Szélesség:"/>
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ResizeWidthPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Grid.Row="1" Grid.Column="1" Text="{Binding ResizeWidthPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
             <Label Grid.Row="1" Grid.Column="2" Content="%"/>
 
             <Label Grid.Row="2" Grid.Column="0" Content="Magasság:"/>
-            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ResizeHeightPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-            <Label Grid.Row="2" Grid.Column="2" Content="%"/>
+            <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Grid.Row="2" Grid.Column="1" Text="{Binding ResizeHeightPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Grid.Row="2" Grid.Column="2" Content="%"/>-->
 
             <Label Margin="0 5 0 0" Grid.Row="3" Grid.Column="0" Content="Szélesség:"/>
-            <TextBox Margin="0 5 0 0" Grid.Row="3" Grid.Column="1" Text="{Binding ResizeWidth,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Margin="0 5 0 0" Grid.Row="3" Grid.Column="1" Text="{Binding ResizeWidth,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
             <Label Margin="0 5 0 0" Grid.Row="3" Grid.Column="2" Content="px"/>
 
             <Label Grid.Row="4" Grid.Column="0" Content="Magasság:"/>
-            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ResizeHeight,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Grid.Row="4" Grid.Column="1" Text="{Binding ResizeHeight,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
             <Label Grid.Row="4" Grid.Column="2" Content="px"/>
 
-            <CheckBox Margin="0 5 0 0" Grid.Row="5" Grid.ColumnSpan="3" HorizontalAlignment="Center" Content="Méretarány megtartása" IsChecked="True"/>
+            <CheckBox Margin="0 5 0 0" Grid.Row="5" Grid.ColumnSpan="3" HorizontalAlignment="Center" Content="Méretarány megtartása" IsChecked="{Binding KeepAspectRatio}"/>
         </Grid>
         <!--#endregion-->
         <!--#region Font -->
@@ -91,8 +91,12 @@
             </Grid.RowDefinitions>
 
             <ComboBox Grid.Row="0" Grid.ColumnSpan="4" ItemsSource="{Binding AvailableFonts}" SelectedItem="{Binding SelectedFont}"/>
-            <ComboBox Grid.Row="1" Grid.Column="0" Margin="0 5" MinWidth="50" ItemsSource="{Binding AvailableFontSizes}" SelectedItem="{Binding SelectedFontSize}"/>
 
+            <DockPanel Grid.Row="1" Margin="0 5 0 2">
+                <Label DockPanel.Dock="Left" Content="Betűméret:"/>
+                <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Text="{Binding FontSize,UpdateSourceTrigger=PropertyChanged}"/>
+            </DockPanel>
+            
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
