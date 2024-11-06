@@ -9,20 +9,24 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace ProjektLavor
 {
     public class ResizeAdorner : Adorner
     {
         VisualCollection AdornerVisuals;
+
         Thumb thumbTopLeft;
         Thumb thumbTopRight;
         Thumb thumbBottomLeft;
         Thumb thumbBottomRight;
+        Rectangle thumbBounds;
 
         public ResizeAdorner(UIElement adornedElement) : base(adornedElement)
         {
             AdornerVisuals = new VisualCollection(this);
+            thumbBounds = new Rectangle() { Stroke = Brushes.Gray, StrokeThickness = 2, StrokeDashArray = { 3, 2 } };
             thumbTopLeft = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30 };
             thumbTopRight = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30 };
             thumbBottomLeft = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30 };
@@ -32,6 +36,9 @@ namespace ProjektLavor
             thumbTopRight.Cursor = Cursors.SizeNESW;
             thumbBottomLeft.Cursor = Cursors.SizeNESW;
             thumbBottomRight.Cursor = Cursors.SizeNWSE;
+
+            
+            AdornerVisuals.Add(thumbBounds);
             AdornerVisuals.Add(thumbTopLeft);
             AdornerVisuals.Add(thumbTopRight);
             AdornerVisuals.Add(thumbBottomLeft);
@@ -154,6 +161,7 @@ namespace ProjektLavor
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            thumbBounds.Arrange(new Rect(-2.5, -2.5, AdornedElement.RenderSize.Width + 5, AdornedElement.RenderSize.Height + 5));
             thumbTopLeft.Arrange(new Rect(-5, -5, 10, 10));
             thumbTopRight.Arrange(new Rect(AdornedElement.RenderSize.Width - 5, -5, 10, 10));
             thumbBottomLeft.Arrange(new Rect(-5, AdornedElement.RenderSize.Height - 5, 10, 10));

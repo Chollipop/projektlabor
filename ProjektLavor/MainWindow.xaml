@@ -17,8 +17,8 @@
             <DataTemplate DataType="{x:Type viewmodels:EditorLayoutViewModel}">
                 <views:EditorLayoutView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type viewmodels:NewTextElementViewModel}">
-                <views:NewTextElementView />
+            <DataTemplate DataType="{x:Type viewmodels:TextElementInputViewModel}">
+                <views:TextElementInputView />
             </DataTemplate>
         </Grid.Resources>
 

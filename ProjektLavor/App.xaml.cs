@@ -28,7 +28,7 @@ namespace ProjektLavor
 
             services.AddTransient<EditorLayoutViewModel>(x => new EditorLayoutViewModel(
                 CreateToolbarViewModel(x),
-                new EditorViewModel(x.GetRequiredService<ProjectStore>(), x.GetRequiredService<SelectedElementStore>())
+                new EditorViewModel(x)
                 ));
             services.AddSingleton<NavigationBarViewModel>(CreateNavigationBarViewModel);
             services.AddSingleton<MainViewModel>();
@@ -65,9 +65,9 @@ namespace ProjektLavor
         }
         private INavigationService CreateNewTextElementModalNavigationService(IServiceProvider serviceProvider)
         {
-            return new ModalNavigationService<NewTextElementViewModel>(
+            return new ModalNavigationService<TextElementInputViewModel>(
                     serviceProvider.GetRequiredService<ModalNavigationStore>(),
-                    () => new NewTextElementViewModel(
+                    () => new TextElementInputViewModel(
                         serviceProvider.GetRequiredService<ProjectStore>(),
                         new CloseModalNavigationService(serviceProvider.GetRequiredService<ModalNavigationStore>())
                     )

@@ -19,6 +19,9 @@ namespace ProjektLavor.ViewModels
     {
         private FrameworkElement _element;
 
+        private bool isFontChangeAvailable;
+        public bool IsFontChangeAvailable => _element.GetType() == typeof(TextBlock);
+
         private DependencyPropertyDescriptor WidthDependencyPropertyDescriptor;
 
         private double rotationDegree;

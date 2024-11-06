@@ -18,9 +18,9 @@ namespace ProjektLavor.Views
     /// <summary>
     /// Interaction logic for NewTextElementView.xaml
     /// </summary>
-    public partial class NewTextElementView : UserControl
+    public partial class TextElementInputView : UserControl
     {
-        public NewTextElementView()
+        public TextElementInputView()
         {
             InitializeComponent();
         }
