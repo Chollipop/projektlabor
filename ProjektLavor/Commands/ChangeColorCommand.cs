@@ -1,30 +1,39 @@
 ﻿using ProjektLavor.Stores;
 using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
 
 namespace ProjektLavor.Commands
 {
     public class ChangeColorCommand : CommandBase
     {
         private ProjectStore _projectStore;
-        public ChangeColorCommand(ProjectStore projectStore)
+        private SelectedElementStore _selectedElementStore;
+
+        public ChangeColorCommand(ProjectStore projectStore, SelectedElementStore selectedElementStore)
         {
             _projectStore = projectStore;
+            _selectedElementStore = selectedElementStore;
         }
 
         public override void Execute(object? parameter)
         {
             if (parameter == null || parameter.GetType() != typeof(Button)) return;
 
-            if(_projectStore?.CurrentProject?.Document == null) return;
-            foreach(PageContent pageContent in _projectStore.CurrentProject.Document.Pages)
+            if (_projectStore?.CurrentProject?.Document == null) return;
+
+            var activePage = _projectStore.CurrentProject.ActivePage;
+            var selectedElement = _selectedElementStore.SelectedElement;
+
+            if (selectedElement != null && selectedElement.GetType() == typeof(TextBlock))
             {
-                pageContent.Child.Background = (parameter as Button).Background;
+                ((TextBlock)selectedElement).Foreground = ((Button)parameter).Background;
+            }
+            else if (activePage != null)
+            {
+                activePage.Background = ((Button)parameter).Background;
             }
         }
     }

@@ -34,6 +34,15 @@ namespace ProjektLavor.ViewModels
             }
             set
             {
+                if (value > 360)
+                {
+                    value = 360;
+                }
+
+                if (value < -360)
+                {
+                    value = -360;
+                }
                 rotationDegree = value;
                 var rotateTransform = new RotateTransform(rotationDegree)
                 {
@@ -47,20 +56,6 @@ namespace ProjektLavor.ViewModels
 
         public ICommand VerticalMirrorCommand { get; set; }
         public ICommand HorizontalMirrorCommand { get; set; }
-
-        private bool keepAspectRatio = true;
-        public bool KeepAspectRatio
-        {
-            get => keepAspectRatio;
-            set
-            {
-                if (keepAspectRatio != value)
-                {
-                    keepAspectRatio = value;
-                    OnPropertyChanged(nameof(KeepAspectRatio));
-                }
-            }
-        }
 
         //private double resizeWidthPercent = 100;
         //public double ResizeWidthPercent
@@ -140,6 +135,20 @@ namespace ProjektLavor.ViewModels
         //    }
         //}
 
+        private bool keepAspectRatio = false;
+        public bool KeepAspectRatio
+        {
+            get => keepAspectRatio;
+            set
+            {
+                if (keepAspectRatio != value)
+                {
+                    keepAspectRatio = value;
+                    OnPropertyChanged(nameof(KeepAspectRatio));
+                }
+            }
+        }
+
         private double resizeWidth;
         public double ResizeWidth
         {
@@ -153,18 +162,29 @@ namespace ProjektLavor.ViewModels
             }
             set
             {
+                if (value < 1)
+                {
+                    value = 1;
+                }
+
                 if (!KeepAspectRatio)
                 {
+                    if (double.IsNaN(_element.Height))
+                    {
+                        _element.Height = _element.ActualHeight;
+                    }
                     resizeWidth = Math.Ceiling(value);
                     _element.Width = resizeWidth;
                     OnPropertyChanged(nameof(ResizeWidth));
                 }
                 else
                 {
+                    double aspectRatio = ResizeWidth / ResizeHeight;
+
                     resizeWidth = Math.Ceiling(value);
                     _element.Width = resizeWidth;
-                    
-                    resizeHeight = Math.Ceiling(value);
+
+                    resizeHeight = Math.Ceiling(resizeWidth / aspectRatio);
                     _element.Height = resizeHeight;
 
                     OnPropertyChanged(nameof(ResizeWidth));
@@ -187,20 +207,30 @@ namespace ProjektLavor.ViewModels
             }
             set
             {
+                if (value < 1)
+                {
+                    value = 1;
+                }
 
                 if (!KeepAspectRatio)
                 {
+                    if (double.IsNaN(_element.Width))
+                    {
+                        _element.Width = _element.ActualWidth;
+                    }
                     resizeHeight = Math.Ceiling(value);
                     _element.Height = resizeHeight;
                     OnPropertyChanged(nameof(ResizeHeight));
                 }
                 else
                 {
-                    resizeWidth = Math.Ceiling(value);
-                    _element.Width = resizeWidth;
+                    double aspectRatio = ResizeWidth / ResizeHeight;
 
                     resizeHeight = Math.Ceiling(value);
                     _element.Height = resizeHeight;
+
+                    resizeWidth = Math.Ceiling(resizeHeight * aspectRatio);
+                    _element.Width = resizeWidth;
 
                     OnPropertyChanged(nameof(ResizeWidth));
                     OnPropertyChanged(nameof(ResizeHeight));
@@ -274,8 +304,8 @@ namespace ProjektLavor.ViewModels
 
         private void UpdateValues(object? sender, EventArgs e)
         {
-            ResizeWidth = _element.Width;
-            ResizeHeight = _element.Height;
+            OnPropertyChanged(nameof(ResizeWidth));
+            OnPropertyChanged(nameof(ResizeHeight));
         }
         public override void Dispose()
         {
