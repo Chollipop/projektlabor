@@ -20,6 +20,9 @@
             <DataTemplate DataType="{x:Type viewmodels:TextElementInputViewModel}">
                 <views:TextElementInputView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewmodels:CollectionBrowserViewModel}">
+                <views:CollectionBrowserView />
+            </DataTemplate>
         </Grid.Resources>
 
         <components:Modal IsOpen="{Binding IsModalOpen}" Panel.ZIndex="9999">

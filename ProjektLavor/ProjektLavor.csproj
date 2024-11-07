@@ -14,7 +14,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Bubbles\bubble1.png" />
+    <None Remove="Assets\Bubbles\bubble2.png" />
+    <None Remove="Assets\Bubbles\bubble3.png" />
+    <None Remove="Assets\Bubbles\bubble4.png" />
+    <None Remove="Assets\Bubbles\bubble5.png" />
     <None Remove="Assets\coconut.jpg" />
+    <None Remove="Assets\Frames\frame.png" />
+    <None Remove="Assets\Frames\frame2.png" />
+    <None Remove="Assets\Frames\frame3.png" />
+    <None Remove="Assets\Frames\frame4.png" />
     <None Remove="Assets\Icons\bold.png" />
     <None Remove="Assets\Icons\chat.png" />
     <None Remove="Assets\Icons\close.png" />
@@ -24,6 +33,7 @@
     <None Remove="Assets\Icons\frame.png" />
     <None Remove="Assets\Icons\image.png" />
     <None Remove="Assets\Icons\italic.png" />
+    <None Remove="Assets\Icons\magic-wand.png" />
     <None Remove="Assets\Icons\new-document.png" />
     <None Remove="Assets\Icons\printing.png" />
     <None Remove="Assets\Icons\redo.png" />
@@ -43,7 +53,34 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Bubbles\bubble1.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Bubbles\bubble2.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Bubbles\bubble3.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Bubbles\bubble4.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Bubbles\bubble5.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\coconut.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Frames\frame.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Frames\frame2.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Frames\frame3.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Frames\frame4.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\bold.png">
@@ -71,6 +108,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\italic.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\magic-wand.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\new-document.png">
