@@ -10,26 +10,25 @@ using System.Windows.Documents;
 
 namespace ProjektLavor.Commands
 {
-    internal class RemoveElementCommand : CommandBase
+    public class RemoveElementCommand : CommandBase
     {
         private readonly SelectedElementStore _selectedElementStore;
+        private FrameworkElement _element;
 
-        public RemoveElementCommand(SelectedElementStore selectedElementStore)
+        public RemoveElementCommand(FrameworkElement element, SelectedElementStore selectedElementStore)
         {
+            _element = element;
             _selectedElementStore = selectedElementStore;
         }
 
         public override void Execute(object? parameter)
         {
-            if (parameter == null || !typeof(FrameworkElement).IsAssignableFrom(parameter.GetType())) return;
-            FrameworkElement element = (FrameworkElement)parameter;
-
-            if (element.Parent == null) return;
-            if (element.Parent.GetType() != typeof(FixedPage)) return;
-            FixedPage parent = (FixedPage)element.Parent;
+            if (_element?.Parent == null) return;
+            if (_element.Parent.GetType() != typeof(FixedPage)) return;
+            FixedPage parent = (FixedPage)_element.Parent;
 
             _selectedElementStore.Select(null);
-            parent.Children.Remove(element);
+            parent.Children.Remove(_element);
         }
     }
 }

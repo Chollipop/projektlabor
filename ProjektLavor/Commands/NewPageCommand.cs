@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace ProjektLavor.Commands
 {
-    internal class NewPageCommand : CommandBase
+    public class NewPageCommand : CommandBase
     {
         private ProjectStore _projectStore;
 
