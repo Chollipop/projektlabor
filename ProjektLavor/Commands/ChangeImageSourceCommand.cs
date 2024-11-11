@@ -11,12 +11,18 @@ using System.Windows.Shapes;
 
 namespace ProjektLavor.Commands
 {
-    class ChangeImageSourceCommand : CommandBase
+    public class ChangeImageSourceCommand : CommandBase
     {
+        private Image _element;
+
+        public ChangeImageSourceCommand(Image image)
+        {
+            _element = image;
+        }
+
         public override void Execute(object? parameter)
         {
-            if (parameter == null || parameter.GetType() != typeof(Image)) return;
-            Image image = (Image)parameter;
+            if (_element == null) return;
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = @"Képfájlok (*.png,*.jpg,*.jpeg,*.bmp,*.gif,*.tiff,*.exif)|" +
@@ -28,15 +34,15 @@ namespace ProjektLavor.Commands
             {
                 if (!File.Exists(openFileDialog.FileName)) return;
 
-                if (double.IsNaN(image.Width) || double.IsNaN(image.Height))
+                if (double.IsNaN(_element.Width) || double.IsNaN(_element.Height))
                 {
-                    double width = image.ActualWidth;
-                    double height = image.ActualHeight;
-                    image.Width = width;
-                    image.Height = height;
+                    double width = _element.ActualWidth;
+                    double height = _element.ActualHeight;
+                    _element.Width = width;
+                    _element.Height = height;
                 }
 
-                image.Source = new BitmapImage(new Uri(openFileDialog.FileName));
+                _element.Source = new BitmapImage(new Uri(openFileDialog.FileName));
             }
         }
     }

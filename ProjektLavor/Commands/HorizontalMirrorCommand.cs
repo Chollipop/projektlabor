@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace ProjektLavor.Commands
 {
-    internal class HorizontalMirrorCommand : CommandBase
+    public class HorizontalMirrorCommand : CommandBase
     {
         private ProjectStore _projectStore;
         private FrameworkElement _selectedElement;

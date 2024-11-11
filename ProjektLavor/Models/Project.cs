@@ -79,8 +79,7 @@ namespace ProjektLavor.Models
 
             MenuItem removeElementMenuItem = new MenuItem();
             removeElementMenuItem.Header = "Törlés";
-            removeElementMenuItem.Command = new RemoveElementCommand(_selectedElementStore);
-            removeElementMenuItem.CommandParameter = textBlock;
+            removeElementMenuItem.Command = new RemoveElementCommand(textBlock, _selectedElementStore);
             textBlock.ContextMenu.Items.Add(removeElementMenuItem);
 
             return textBlock;
@@ -96,14 +95,12 @@ namespace ProjektLavor.Models
 
             MenuItem changeImageMenuItem = new MenuItem();
             changeImageMenuItem.Header = "Kép módosítása";
-            changeImageMenuItem.Command = new ChangeImageSourceCommand();
-            changeImageMenuItem.CommandParameter = image;
+            changeImageMenuItem.Command = new ChangeImageSourceCommand(image);
             image.ContextMenu.Items.Add(changeImageMenuItem);
 
             MenuItem removeElementMenuItem = new MenuItem();
             removeElementMenuItem.Header = "Törlés";
-            removeElementMenuItem.Command = new RemoveElementCommand(_selectedElementStore);
-            removeElementMenuItem.CommandParameter = image;
+            removeElementMenuItem.Command = new RemoveElementCommand(image, _selectedElementStore);
             image.ContextMenu.Items.Add(removeElementMenuItem);
 
             return image;
