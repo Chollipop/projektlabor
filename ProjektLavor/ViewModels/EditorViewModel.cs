@@ -103,6 +103,9 @@ namespace ProjektLavor.ViewModels
         #region ELEMENT MOVING
         private void FixedPage_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (e.ChangedButton == MouseButton.Right &&
+                (e.OriginalSource.GetType() == typeof(Image) || e.OriginalSource.GetType() == typeof(TextBlock))) return;
+
             e.Handled = true;
             if (e.OriginalSource.GetType() == typeof(FixedPage))
             {
@@ -118,11 +121,13 @@ namespace ProjektLavor.ViewModels
             _selectedElementStore.Select(element);
 
             ReattachResizeAdorner(element);
-            
         }
 
         private void FixedPage_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            if (e.ChangedButton == MouseButton.Right &&
+                (e.OriginalSource.GetType() == typeof(Image) || e.OriginalSource.GetType() == typeof(TextBlock))) return;
+
             e.Handled = true;
             IsDragging = false;
         }
