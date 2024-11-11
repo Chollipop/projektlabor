@@ -59,16 +59,27 @@ namespace ProjektLavor
 
             double newWidth = element.Width;
             double newHeight = element.Height;
+            double newVerticalChange = e.VerticalChange;
+            double newHorizontalChange = e.HorizontalChange;
             if (double.IsNaN(newWidth) || newWidth <= 0) newWidth = element.ActualWidth;
             if (double.IsNaN(newHeight) || newHeight <= 0) newHeight = element.ActualHeight;
+            
+            newWidth -= e.HorizontalChange;
+            newHeight -= e.VerticalChange;
 
-            newWidth    -= e.HorizontalChange;
-            newHeight   -= e.VerticalChange;
-            double top = FixedPage.GetTop(element) + e.VerticalChange;
-            double left = FixedPage.GetLeft(element) + e.HorizontalChange;
+            if (newWidth < 10)
+            {
+                newHorizontalChange = 0;
+                newWidth = 10;
+            }
+            if (newHeight < 10)
+            {
+                newVerticalChange = 0;
+                newHeight = 10;
+            }
 
-            if (newWidth < 10) newWidth = 10;
-            if (newHeight < 10) newHeight = 10;
+            double top = FixedPage.GetTop(element) + newVerticalChange;
+            double left = FixedPage.GetLeft(element) + newHorizontalChange;
 
             element.Width = newWidth;
             element.Height = newHeight;
@@ -84,16 +95,22 @@ namespace ProjektLavor
 
             double newWidth = element.Width;
             double newHeight = element.Height;
+            double newVerticalChange = e.VerticalChange;
             if (double.IsNaN(newWidth) || newWidth <= 0) newWidth = element.ActualWidth;
             if (double.IsNaN(newHeight) || newHeight <= 0) newHeight = element.ActualHeight;
 
             newWidth    += e.HorizontalChange;
             newHeight   -= e.VerticalChange;
-            double top = FixedPage.GetTop(element) + e.VerticalChange;
-            double left = FixedPage.GetLeft(element);
 
             if (newWidth < 10) newWidth = 10;
-            if (newHeight < 10) newHeight = 10;
+            if (newHeight < 10)
+            {
+                newVerticalChange = 0;
+                newHeight = 10;
+            }
+
+            double top = FixedPage.GetTop(element) + newVerticalChange;
+            double left = FixedPage.GetLeft(element);
 
             element.Width = newWidth;
             element.Height = newHeight;
@@ -109,16 +126,22 @@ namespace ProjektLavor
 
             double newWidth = element.Width;
             double newHeight = element.Height;
+            double newHorizontalChange = e.HorizontalChange;
             if (double.IsNaN(newWidth) || newWidth <= 0) newWidth = element.ActualWidth;
             if (double.IsNaN(newHeight) || newHeight <= 0) newHeight = element.ActualHeight;
 
             newWidth    -= e.HorizontalChange;
             newHeight   += e.VerticalChange;
-            double top = FixedPage.GetTop(element);
-            double left = FixedPage.GetLeft(element) + e.HorizontalChange;
 
-            if (newWidth < 10) newWidth = 10;
+            if (newWidth < 10)
+            {
+                newHorizontalChange = 0;
+                newWidth = 10;
+            }
             if (newHeight < 10) newHeight = 10;
+
+            double top = FixedPage.GetTop(element);
+            double left = FixedPage.GetLeft(element) + newHorizontalChange;
 
             element.Width = newWidth;
             element.Height = newHeight;
@@ -139,11 +162,12 @@ namespace ProjektLavor
 
             newWidth    += e.HorizontalChange;
             newHeight   += e.VerticalChange;
-            double top = FixedPage.GetTop(element);
-            double left = FixedPage.GetLeft(element);
-            
+
             if (newWidth < 10) newWidth = 10;
             if (newHeight < 10) newHeight = 10;
+
+            double top = FixedPage.GetTop(element);
+            double left = FixedPage.GetLeft(element);
 
             element.Width = newWidth;
             element.Height = newHeight;
