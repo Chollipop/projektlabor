@@ -1,4 +1,5 @@
 ﻿using ProjektLavor.Stores;
+using ProjektLavor.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,7 @@ namespace ProjektLavor.Models
         private void CreateEmptyDocument()
         {
             Document = new FixedDocument();
+            Document.Cursor = Cursors.Arrow;
             AddBlankPage();
         }
         public void AddTestElements()
@@ -47,6 +49,7 @@ namespace ProjektLavor.Models
 
             fixedPage.Width = ISOA4.Width;
             fixedPage.Height = ISOA4.Height;
+
             pageContent.Child = fixedPage;
             Document.Pages.Add(pageContent);
 
@@ -72,6 +75,14 @@ namespace ProjektLavor.Models
             textBlock.ClipToBounds = true;
             textBlock.Cursor = Cursors.SizeAll;
 
+            textBlock.ContextMenu = new ContextMenu();
+
+            MenuItem removeElementMenuItem = new MenuItem();
+            removeElementMenuItem.Header = "Törlés";
+            removeElementMenuItem.Command = new RemoveElementCommand(_selectedElementStore);
+            removeElementMenuItem.CommandParameter = textBlock;
+            textBlock.ContextMenu.Items.Add(removeElementMenuItem);
+
             return textBlock;
         }
         private Image GetImageField(string path)
@@ -80,6 +91,20 @@ namespace ProjektLavor.Models
             image.Source = new BitmapImage(new Uri(path));
             image.Stretch = Stretch.Fill;
             image.Cursor = Cursors.SizeAll;
+
+            image.ContextMenu = new ContextMenu();
+
+            MenuItem changeImageMenuItem = new MenuItem();
+            changeImageMenuItem.Header = "Kép módosítása";
+            changeImageMenuItem.Command = new ChangeImageSourceCommand();
+            changeImageMenuItem.CommandParameter = image;
+            image.ContextMenu.Items.Add(changeImageMenuItem);
+
+            MenuItem removeElementMenuItem = new MenuItem();
+            removeElementMenuItem.Header = "Törlés";
+            removeElementMenuItem.Command = new RemoveElementCommand(_selectedElementStore);
+            removeElementMenuItem.CommandParameter = image;
+            image.ContextMenu.Items.Add(removeElementMenuItem);
 
             return image;
         }

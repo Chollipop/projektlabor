@@ -26,13 +26,12 @@ namespace ProjektLavor.ViewModels
 
         private DependencyPropertyDescriptor WidthDependencyPropertyDescriptor;
 
-        private double rotationDegree;
         public double RotationDegree
         {
             get
             {
-                RotateTransform rotation = _element.RenderTransform as RotateTransform;
-                return rotation?.Angle??0;
+                TransformGroup transformGroup = _element.RenderTransform as TransformGroup;
+                return transformGroup?.Children.OfType<RotateTransform>().FirstOrDefault()?.Angle ?? 0;
             }
             set
             {
@@ -47,13 +46,22 @@ namespace ProjektLavor.ViewModels
                 {
                     value = -360;
                 }
-                rotationDegree = value;
-                var rotateTransform = new RotateTransform(rotationDegree)
+
+                var transformGroup = _element.RenderTransform as TransformGroup;
+                if (transformGroup == null)
                 {
-                    CenterX = _element.ActualWidth / 2,
-                    CenterY = _element.ActualHeight / 2
-                };
-                _element.RenderTransform = rotateTransform;
+                    transformGroup = new TransformGroup();
+                    _element.RenderTransform = transformGroup;
+                }
+                var rotateTransform = transformGroup.Children.OfType<RotateTransform>().FirstOrDefault();
+                if (rotateTransform == null)
+                {
+                    rotateTransform = new RotateTransform();
+                    transformGroup.Children.Add(rotateTransform);
+                }
+                rotateTransform.CenterX = _element.ActualWidth / 2;
+                rotateTransform.CenterY = _element.ActualHeight / 2;
+                rotateTransform.Angle = value;
                 OnPropertyChanged(nameof(RotationDegree));
             }
         }
