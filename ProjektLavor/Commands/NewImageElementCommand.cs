@@ -20,6 +20,8 @@ namespace ProjektLavor.Commands
 
         public override void Execute(object? parameter)
         {
+            _projectStore.SaveState();
+
             if (_projectStore.CurrentProject == null) return;
 
             OpenFileDialog openFileDialog = new OpenFileDialog();

@@ -11,15 +11,19 @@ namespace ProjektLavor.Commands
 {
     public class ToggleBoldCommand : CommandBase
     {
+        private ProjectStore _projectStore;
         private TextBlock _selectedElement;
 
-        public ToggleBoldCommand(TextBlock selectedElement)
+        public ToggleBoldCommand(TextBlock selectedElement, ProjectStore projectStore)
         {
             _selectedElement = selectedElement;
+            _projectStore = projectStore;
         }
 
         public override void Execute(object? parameter)
         {
+            _projectStore.SaveState();
+
             _selectedElement.FontWeight = _selectedElement.FontWeight == FontWeights.Bold ? FontWeights.Normal : FontWeights.Bold;
         }
     }

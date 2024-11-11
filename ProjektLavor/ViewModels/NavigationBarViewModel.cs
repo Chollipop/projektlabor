@@ -38,8 +38,8 @@ namespace ProjektLavor.ViewModels
 
             NewPageCommand = new NewPageCommand(projectStore);
 
-            //UndoCommand = new UndoCommand();
-            //RedoCommand = new RedoCommand();
+            UndoCommand = new UndoCommand(projectStore);
+            RedoCommand = new RedoCommand(projectStore);
 
             ExitApplicationCommand = new ExitApplicationCommand();
         }

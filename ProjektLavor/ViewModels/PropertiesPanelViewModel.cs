@@ -1,4 +1,5 @@
 ﻿using ProjektLavor.Commands;
+using ProjektLavor.Stores;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +18,7 @@ namespace ProjektLavor.ViewModels
 {
     public class PropertiesPanelViewModel : ViewModelBase
     {
+        private ProjectStore _projectStore;
         private FrameworkElement _element;
 
         private bool isFontChangeAvailable;
@@ -34,6 +36,8 @@ namespace ProjektLavor.ViewModels
             }
             set
             {
+                _projectStore.SaveState();
+
                 if (value > 360)
                 {
                     value = 360;
@@ -162,6 +166,8 @@ namespace ProjektLavor.ViewModels
             }
             set
             {
+                _projectStore.SaveState();
+
                 if (value < 1)
                 {
                     value = 1;
@@ -207,6 +213,8 @@ namespace ProjektLavor.ViewModels
             }
             set
             {
+                _projectStore.SaveState();
+
                 if (value < 1)
                 {
                     value = 1;
@@ -248,6 +256,8 @@ namespace ProjektLavor.ViewModels
             }
             set
             {
+                _projectStore.SaveState();
+
                 fontSize = value;
                 _element.SetValue(TextElement.FontSizeProperty, (double)fontSize);
                 OnPropertyChanged(nameof(FontSize));
@@ -270,6 +280,8 @@ namespace ProjektLavor.ViewModels
             }
             set
             {
+                _projectStore.SaveState();
+
                 selectedFont = value;
                 _element.SetValue(TextElement.FontFamilyProperty, new FontFamily(selectedFont));
                 OnPropertyChanged(nameof(SelectedFont));
@@ -281,19 +293,20 @@ namespace ProjektLavor.ViewModels
         public ICommand ToggleItalicCommand { get; set; }
         public ICommand ToggleUnderlineCommand { get; set; }
 
-        public PropertiesPanelViewModel(FrameworkElement element)
+        public PropertiesPanelViewModel(FrameworkElement element, ProjectStore projectStore)
         {
+            _projectStore = projectStore;
             _element = element;
             WidthDependencyPropertyDescriptor = DependencyPropertyDescriptor.FromProperty(FrameworkElement.WidthProperty, typeof(FrameworkElement));
             WidthDependencyPropertyDescriptor.AddValueChanged(_element, UpdateValues);
-            VerticalMirrorCommand = new VerticalMirrorCommand(_element);
-            HorizontalMirrorCommand = new HorizontalMirrorCommand(_element);
+            VerticalMirrorCommand = new VerticalMirrorCommand(_projectStore, _element);
+            HorizontalMirrorCommand = new HorizontalMirrorCommand(_element, _projectStore);
 
             if (_element.GetType() == typeof(TextBlock))
             {
-                ToggleBoldCommand = new ToggleBoldCommand((TextBlock)_element);
-                ToggleItalicCommand = new ToggleItalicCommand((TextBlock)_element);
-                ToggleUnderlineCommand = new ToggleUnderlineCommand((TextBlock)_element);
+                ToggleBoldCommand = new ToggleBoldCommand((TextBlock)_element, _projectStore);
+                ToggleItalicCommand = new ToggleItalicCommand((TextBlock)_element, _projectStore);
+                ToggleUnderlineCommand = new ToggleUnderlineCommand((TextBlock)_element, _projectStore);
             }
 
             AvailableFonts = Fonts.SystemFontFamilies.OrderBy(f => f.Source).Select(f => f.Source).ToList();

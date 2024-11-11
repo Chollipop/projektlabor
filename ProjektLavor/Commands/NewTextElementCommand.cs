@@ -19,6 +19,8 @@ namespace ProjektLavor.Commands
 
         public override void Execute(object? parameter)
         {
+            _projectStore.SaveState();
+
             _navigationService.Navigate();
             if (_projectStore.CurrentProject == null || String.IsNullOrEmpty(_viewModel.TextInput)) return;
             _projectStore.CurrentProject.AddNewTextField(_viewModel.TextInput);

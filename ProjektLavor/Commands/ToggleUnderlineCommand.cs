@@ -11,15 +11,19 @@ namespace ProjektLavor.Commands
 {
     public class ToggleUnderlineCommand : CommandBase
     {
+        private ProjectStore _projectStore;
         private TextBlock _selectedElement;
 
-        public ToggleUnderlineCommand(TextBlock selectedElement)
+        public ToggleUnderlineCommand(TextBlock selectedElement, ProjectStore projectStore)
         {
             _selectedElement = selectedElement;
+            _projectStore = projectStore;
         }
 
         public override void Execute(object? parameter)
         {
+            _projectStore.SaveState();
+
             if (_selectedElement.TextDecorations == null || !_selectedElement.TextDecorations.Contains(TextDecorations.Underline[0]))
             {
                 _selectedElement.TextDecorations = new TextDecorationCollection(TextDecorations.Underline);

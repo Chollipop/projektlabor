@@ -9,22 +9,18 @@ using System.Windows.Controls;
 
 namespace ProjektLavor.Commands
 {
-    public class ToggleItalicCommand : CommandBase
+    public class UndoCommand : CommandBase
     {
         private ProjectStore _projectStore;
-        private TextBlock _selectedElement;
 
-        public ToggleItalicCommand(TextBlock selectedElement, ProjectStore projectStore)
+        public UndoCommand(ProjectStore projectStore)
         {
-            _selectedElement = selectedElement;
             _projectStore = projectStore;
         }
 
         public override void Execute(object? parameter)
         {
-            _projectStore.SaveState();
-
-            _selectedElement.FontStyle = _selectedElement.FontStyle == FontStyles.Italic ? FontStyles.Normal : FontStyles.Italic;
+            _projectStore.Undo();
         }
     }
 }

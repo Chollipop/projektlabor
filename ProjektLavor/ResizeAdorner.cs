@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjektLavor.Stores;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace ProjektLavor
 {
     public class ResizeAdorner : Adorner
     {
+        private ProjectStore _projectStore;
         VisualCollection AdornerVisuals;
 
         Thumb thumbTopLeft;
@@ -23,8 +25,9 @@ namespace ProjektLavor
         Thumb thumbBottomRight;
         Rectangle thumbBounds;
 
-        public ResizeAdorner(UIElement adornedElement) : base(adornedElement)
+        public ResizeAdorner(ProjectStore projectStore, UIElement adornedElement) : base(adornedElement)
         {
+            _projectStore = projectStore;
             AdornerVisuals = new VisualCollection(this);
             thumbBounds = new Rectangle() { Stroke = Brushes.Gray, StrokeThickness = 2, StrokeDashArray = { 3, 2 } };
             thumbTopLeft = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30 };
@@ -54,6 +57,8 @@ namespace ProjektLavor
 
         private void ThumbTopLeft_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            _projectStore.SaveState();
+
             FrameworkElement element = (FrameworkElement)AdornedElement;
             if (element == null) return;
 
@@ -79,6 +84,8 @@ namespace ProjektLavor
         }
         private void ThumbTopRight_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            _projectStore.SaveState();
+
             FrameworkElement element = (FrameworkElement)AdornedElement;
             if (element == null) return;
 
@@ -104,6 +111,8 @@ namespace ProjektLavor
         }
         private void ThumbBottomLeft_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            _projectStore.SaveState();
+
             FrameworkElement element = (FrameworkElement)AdornedElement;
             if (element == null) return;
 
@@ -129,6 +138,8 @@ namespace ProjektLavor
         }
         private void ThumbBottomRight_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            _projectStore.SaveState();
+
             FrameworkElement element = (FrameworkElement)AdornedElement;
             if (element == null) return;
 

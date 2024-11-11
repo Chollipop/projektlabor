@@ -20,6 +20,8 @@ namespace ProjektLavor.Commands
 
         public override void Execute(object? parameter)
         {
+            _projectStore.SaveState();
+
             if (parameter == null || parameter.GetType() != typeof(Button)) return;
 
             if (_projectStore?.CurrentProject?.Document == null) return;

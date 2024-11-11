@@ -7,15 +7,19 @@ namespace ProjektLavor.Commands
 {
     internal class HorizontalMirrorCommand : CommandBase
     {
+        private ProjectStore _projectStore;
         private FrameworkElement _selectedElement;
 
-        public HorizontalMirrorCommand(FrameworkElement selectedElement)
+        public HorizontalMirrorCommand(FrameworkElement selectedElement, ProjectStore projectStore)
         {
             _selectedElement = selectedElement;
+            _projectStore = projectStore;
         }
 
         public override void Execute(object? parameter)
         {
+            _projectStore.SaveState();
+
             if (_selectedElement != null)
             {
                 var transformGroup = _selectedElement.RenderTransform as TransformGroup;

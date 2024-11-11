@@ -24,6 +24,7 @@ namespace ProjektLavor.ViewModels
         private SelectedElementStore _selectedElementStore;
         private PropertiesPanelViewModel _propertiesPanelViewModel;
         private ModalNavigationStore _modalNavigationStore;
+        private bool _hasMoved;
 
         public PropertiesPanelViewModel PropertiesPanelViewModel
         {
@@ -73,7 +74,7 @@ namespace ProjektLavor.ViewModels
             OnPropertyChanged(nameof(HasSelectedItem));
             if (!HasSelectedItem) return;
 
-            PropertiesPanelViewModel = new PropertiesPanelViewModel(_selectedElementStore.SelectedElement);
+            PropertiesPanelViewModel = new PropertiesPanelViewModel(_selectedElementStore.SelectedElement, _projectStore);
 
             if (_selectedElementStore.SelectedElement.GetType() == typeof(TextBlock))
             {
@@ -85,6 +86,7 @@ namespace ProjektLavor.ViewModels
         private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount != 2) return;
+            _projectStore.SaveState();
 
             e.Handled = true;
             IsDragging = false;
@@ -117,8 +119,8 @@ namespace ProjektLavor.ViewModels
             IsDragging = true;
             _selectedElementStore.Select(element);
 
+            _hasMoved = false;
             ReattachResizeAdorner(element);
-            
         }
 
         private void FixedPage_MouseUp(object sender, MouseButtonEventArgs e)
@@ -131,6 +133,12 @@ namespace ProjektLavor.ViewModels
         {
             e.Handled = true;
             if (!IsDragging || _selectedElementStore.SelectedElement == null) return;
+            
+            if(!_hasMoved)
+            {
+                _hasMoved = true;
+                _projectStore.SaveState();
+            }
 
             FixedPage fixedPage = (FixedPage)sender;
             foreach (PageContent pageContent in _projectStore.CurrentProject.Document.Pages)
@@ -167,6 +175,8 @@ namespace ProjektLavor.ViewModels
         private void DetachResizeAdorner(FrameworkElement element)
         {
             AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(element);
+            if (adornerLayer == null) return;
+
             UIElement[] adorners = adornerLayer.GetAdorners(element);
 
             if (adorners == null) return;
@@ -180,7 +190,7 @@ namespace ProjektLavor.ViewModels
         private void ReattachResizeAdorner(FrameworkElement element)
         {
             DetachResizeAdorner(element);
-            AdornerLayer.GetAdornerLayer(element).Add(new ResizeAdorner(element));
+            AdornerLayer.GetAdornerLayer(element).Add(new ResizeAdorner(_projectStore, element));
         }
 
         private void _projectStore_CurrentProjectChanged()

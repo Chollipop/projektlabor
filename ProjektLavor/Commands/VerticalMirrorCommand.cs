@@ -7,15 +7,19 @@ namespace ProjektLavor.Commands
 {
     internal class VerticalMirrorCommand : CommandBase
     {
+        private ProjectStore _projectStore;
         private FrameworkElement _selectedElement;
 
-        public VerticalMirrorCommand(FrameworkElement selectedElement)
+        public VerticalMirrorCommand(ProjectStore projectStore, FrameworkElement selectedElement)
         {
+            _projectStore = projectStore;
             _selectedElement = selectedElement;
         }
 
         public override void Execute(object? parameter)
         {
+            _projectStore.SaveState();
+
             if (_selectedElement != null)
             {
                 var transformGroup = _selectedElement.RenderTransform as TransformGroup;
