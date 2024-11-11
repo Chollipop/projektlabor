@@ -123,13 +123,5 @@ namespace ProjektLavor.Stores
             _undoStack.Clear();
             _redoStack.Clear();
         }
-
-        public void UndoLastSave()
-        {
-            if (_undoStack.Count > 0)
-            {
-                _undoStack.Pop();
-            }
-        }
     }
 }
