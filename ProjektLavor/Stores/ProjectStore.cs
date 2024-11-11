@@ -8,13 +8,16 @@ using System.Windows.Documents;
 using System.Xml.Linq;
 using System.Xml;
 using System.Windows;
+using ProjektLavor.Commands;
+using System.Windows.Controls;
+using System.Reflection.Metadata;
 
 namespace ProjektLavor.Stores
 {
     public class ProjectStore
     {
-        private Stack<string> _undoStack = new Stack<string>();
-        private Stack<string> _redoStack = new Stack<string>();
+        private Stack<string> _undoStack;
+        private Stack<string> _redoStack;
 
         private SelectedElementStore _selectedElementStore;
 
@@ -36,11 +39,13 @@ namespace ProjektLavor.Stores
         public ProjectStore(SelectedElementStore selectedElementStore)
         {
             _selectedElementStore = selectedElementStore;
+            _undoStack = new Stack<string>();
+            _redoStack = new Stack<string>();
         }
 
         public void NewProject()
         {
-            CurrentProject = new Project(_selectedElementStore);
+            CurrentProject = new Project(_selectedElementStore, this);
 #if DEBUG
             CurrentProject.AddTestElements();
 #endif
@@ -71,12 +76,37 @@ namespace ProjektLavor.Stores
 
         private string SerializeDocument(FixedDocument document)
         {
+            RemoveContextMenu(document);
+
             XDocument xDocument = new XDocument();
             using (XmlWriter writer = xDocument.CreateWriter())
             {
                 System.Windows.Markup.XamlWriter.Save(document, writer);
             }
+
+            RecreateContextMenu(document);
             return xDocument.ToString();
+        }
+
+        private void RemoveContextMenu(FixedDocument document)
+        {
+            foreach (var page in document.Pages)
+            {
+                if (page.Child is FixedPage fixedPage)
+                {
+                    foreach (var element in fixedPage.Children)
+                    {
+                        if (element is TextBlock textBlock)
+                        {
+                            textBlock.ContextMenu = null;
+                        }
+                        if (element is Image image)
+                        {
+                            image.ContextMenu = null;
+                        }
+                    }
+                }
+            }
         }
 
         private FixedDocument DeserializeDocument(string documentState)
@@ -84,8 +114,65 @@ namespace ProjektLavor.Stores
             XDocument xDocument = XDocument.Parse(documentState);
             using (XmlReader reader = xDocument.CreateReader())
             {
-                return (FixedDocument)System.Windows.Markup.XamlReader.Load(reader);
+                FixedDocument document = (FixedDocument)System.Windows.Markup.XamlReader.Load(reader);
+                RecreateContextMenu(document);
+                return document;
             }
+        }
+
+        private void RecreateContextMenu(FixedDocument document)
+        {
+            foreach (var page in document.Pages)
+            {
+                if (page.Child is FixedPage fixedPage)
+                {
+                    foreach (var element in fixedPage.Children)
+                    {
+                        if (element is TextBlock textBlock)
+                        {
+                            textBlock.ContextMenu = CreateTextBlockContextMenu(textBlock);
+                        }
+                        if (element is Image image)
+                        {
+                            image.ContextMenu = CreateImageContextMenu(image);
+                        }
+                    }
+                }
+            }
+        }
+
+        private ContextMenu CreateTextBlockContextMenu(TextBlock textBlock)
+        {
+            ContextMenu contextMenu = new ContextMenu();
+
+            MenuItem removeElementMenuItem = new MenuItem();
+            removeElementMenuItem.Header = "Törlés";
+            removeElementMenuItem.Command = new RemoveElementCommand();
+            removeElementMenuItem.CommandParameter = Tuple.Create((FrameworkElement)textBlock, _selectedElementStore, this);
+
+            contextMenu.Items.Add(removeElementMenuItem);
+
+            return contextMenu;
+        }
+
+        private ContextMenu CreateImageContextMenu(Image image)
+        {
+            ContextMenu contextMenu = new ContextMenu();
+
+            MenuItem changeImageMenuItem = new MenuItem();
+            changeImageMenuItem.Header = "Kép módosítása";
+            changeImageMenuItem.Command = new ChangeImageSourceCommand();
+            changeImageMenuItem.CommandParameter = Tuple.Create(image, this);
+
+            MenuItem removeElementMenuItem = new MenuItem();
+            removeElementMenuItem.Header = "Törlés";
+            removeElementMenuItem.Command = new RemoveElementCommand();
+            removeElementMenuItem.CommandParameter = Tuple.Create((FrameworkElement)image, _selectedElementStore, this);
+
+            contextMenu.Items.Add(changeImageMenuItem);
+            contextMenu.Items.Add(removeElementMenuItem);
+
+            return contextMenu;
         }
 
         public void Undo()
@@ -98,7 +185,26 @@ namespace ProjektLavor.Stores
                 _redoStack.Push(currentState);
 
                 string previousState = _undoStack.Pop();
-                CurrentProject.Document = DeserializeDocument(previousState);
+                FixedDocument deserializedDocument = DeserializeDocument(previousState);
+
+                for (int i = 0; i < deserializedDocument.Pages.Count; i++)
+                {
+                    var currentPage = CurrentProject.Document.Pages[i].Child;
+                    var deserializedPage = deserializedDocument.Pages[i].Child;
+                    currentPage.Background = deserializedPage.Background;
+
+                    var currentChildren = CurrentProject.Document.Pages[i].Child.Children;
+                    var deserializedChildren = deserializedDocument.Pages[i].Child.Children;
+                    var deserializedChildrenCopy = new List<UIElement>(deserializedChildren.Cast<UIElement>());
+
+                    currentChildren.Clear();
+                    foreach (var child in deserializedChildrenCopy)
+                    {
+                        deserializedChildren.Remove(child);
+                        currentChildren.Add(child);
+                    }
+                    deserializedChildrenCopy.Clear();
+                }
                 OnCurrentProjectChanged();
             }
         }
@@ -113,7 +219,26 @@ namespace ProjektLavor.Stores
                 _undoStack.Push(currentState);
 
                 string nextState = _redoStack.Pop();
-                CurrentProject.Document = DeserializeDocument(nextState);
+                FixedDocument deserializedDocument = DeserializeDocument(nextState);
+
+                for (int i = 0; i < deserializedDocument.Pages.Count; i++)
+                {
+                    var currentPage = CurrentProject.Document.Pages[i].Child;
+                    var deserializedPage = deserializedDocument.Pages[i].Child;
+                    currentPage.Background = deserializedPage.Background;
+
+                    var currentChildren = CurrentProject.Document.Pages[i].Child.Children;
+                    var deserializedChildren = deserializedDocument.Pages[i].Child.Children;
+                    var deserializedChildrenCopy = new List<UIElement>(deserializedChildren.Cast<UIElement>());
+
+                    currentChildren.Clear();
+                    foreach (var child in deserializedChildrenCopy)
+                    {
+                        deserializedChildren.Remove(child);
+                        currentChildren.Add(child);
+                    }
+                    deserializedChildrenCopy.Clear();
+                }
                 OnCurrentProjectChanged();
             }
         }

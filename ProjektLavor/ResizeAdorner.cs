@@ -17,6 +17,7 @@ namespace ProjektLavor
     public class ResizeAdorner : Adorner
     {
         private ProjectStore _projectStore;
+        private bool _isStateSaved;
         VisualCollection AdornerVisuals;
 
         Thumb thumbTopLeft;
@@ -40,25 +41,44 @@ namespace ProjektLavor
             thumbBottomLeft.Cursor = Cursors.SizeNESW;
             thumbBottomRight.Cursor = Cursors.SizeNWSE;
 
-            
             AdornerVisuals.Add(thumbBounds);
             AdornerVisuals.Add(thumbTopLeft);
             AdornerVisuals.Add(thumbTopRight);
             AdornerVisuals.Add(thumbBottomLeft);
             AdornerVisuals.Add(thumbBottomRight);
 
+            thumbTopLeft.DragStarted += Thumb_DragStarted;
+            thumbTopRight.DragStarted += Thumb_DragStarted;
+            thumbBottomLeft.DragStarted += Thumb_DragStarted;
+            thumbBottomRight.DragStarted += Thumb_DragStarted;
+
             thumbTopLeft.DragDelta += ThumbTopLeft_DragDelta;
             thumbTopRight.DragDelta += ThumbTopRight_DragDelta;
             thumbBottomLeft.DragDelta += ThumbBottomLeft_DragDelta;
             thumbBottomRight.DragDelta += ThumbBottomRight_DragDelta;
+
+            thumbTopLeft.DragCompleted += Thumb_DragCompleted;
+            thumbTopRight.DragCompleted += Thumb_DragCompleted;
+            thumbBottomLeft.DragCompleted += Thumb_DragCompleted;
+            thumbBottomRight.DragCompleted += Thumb_DragCompleted;
         }
 
+        private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
+        {
+            if (!_isStateSaved)
+            {
+                _projectStore.SaveState();
+                _isStateSaved = true;
+            }
+        }
 
+        private void Thumb_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            _isStateSaved = false;
+        }
 
         private void ThumbTopLeft_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            _projectStore.SaveState();
-
             FrameworkElement element = (FrameworkElement)AdornedElement;
             if (element == null) return;
 
@@ -68,7 +88,7 @@ namespace ProjektLavor
             double newHorizontalChange = e.HorizontalChange;
             if (double.IsNaN(newWidth) || newWidth <= 0) newWidth = element.ActualWidth;
             if (double.IsNaN(newHeight) || newHeight <= 0) newHeight = element.ActualHeight;
-            
+
             newWidth -= e.HorizontalChange;
             newHeight -= e.VerticalChange;
 
@@ -93,10 +113,9 @@ namespace ProjektLavor
             FixedPage.SetTop(element, top);
             element.UpdateLayout();
         }
+
         private void ThumbTopRight_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            _projectStore.SaveState();
-
             FrameworkElement element = (FrameworkElement)AdornedElement;
             if (element == null) return;
 
@@ -106,8 +125,8 @@ namespace ProjektLavor
             if (double.IsNaN(newWidth) || newWidth <= 0) newWidth = element.ActualWidth;
             if (double.IsNaN(newHeight) || newHeight <= 0) newHeight = element.ActualHeight;
 
-            newWidth    += e.HorizontalChange;
-            newHeight   -= e.VerticalChange;
+            newWidth += e.HorizontalChange;
+            newHeight -= e.VerticalChange;
 
             if (newWidth < 10) newWidth = 10;
             if (newHeight < 10)
@@ -126,10 +145,9 @@ namespace ProjektLavor
             FixedPage.SetTop(element, top);
             element.UpdateLayout();
         }
+
         private void ThumbBottomLeft_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            _projectStore.SaveState();
-
             FrameworkElement element = (FrameworkElement)AdornedElement;
             if (element == null) return;
 
@@ -139,8 +157,8 @@ namespace ProjektLavor
             if (double.IsNaN(newWidth) || newWidth <= 0) newWidth = element.ActualWidth;
             if (double.IsNaN(newHeight) || newHeight <= 0) newHeight = element.ActualHeight;
 
-            newWidth    -= e.HorizontalChange;
-            newHeight   += e.VerticalChange;
+            newWidth -= e.HorizontalChange;
+            newHeight += e.VerticalChange;
 
             if (newWidth < 10)
             {
@@ -159,10 +177,9 @@ namespace ProjektLavor
             FixedPage.SetTop(element, top);
             element.UpdateLayout();
         }
+
         private void ThumbBottomRight_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            _projectStore.SaveState();
-
             FrameworkElement element = (FrameworkElement)AdornedElement;
             if (element == null) return;
 
@@ -171,8 +188,8 @@ namespace ProjektLavor
             if (double.IsNaN(newWidth) || newWidth <= 0) newWidth = element.ActualWidth;
             if (double.IsNaN(newHeight) || newHeight <= 0) newHeight = element.ActualHeight;
 
-            newWidth    += e.HorizontalChange;
-            newHeight   += e.VerticalChange;
+            newWidth += e.HorizontalChange;
+            newHeight += e.VerticalChange;
 
             if (newWidth < 10) newWidth = 10;
             if (newHeight < 10) newHeight = 10;
@@ -204,6 +221,7 @@ namespace ProjektLavor
 
             return finalSize;
         }
+
         protected override Size MeasureOverride(Size constraint)
         {
             foreach (Visual child in AdornerVisuals)
@@ -215,6 +233,5 @@ namespace ProjektLavor
             }
             return base.MeasureOverride(constraint);
         }
-
     }
 }

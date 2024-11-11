@@ -15,7 +15,6 @@ namespace ProjektLavor.Commands
         public override void Execute(object? parameter)
         {
             if (_projectStore?.CurrentProject == null) return;
-            _projectStore.SaveState();
             _projectStore.NewPage();
         }
     }

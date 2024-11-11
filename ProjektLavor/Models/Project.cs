@@ -11,6 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Xceed.Wpf.AvalonDock.Controls;
 
 namespace ProjektLavor.Models
 {
@@ -18,14 +19,16 @@ namespace ProjektLavor.Models
     {
         private readonly Size ISOA4 = new Size(796.8, 1123.2);
         private SelectedElementStore _selectedElementStore;
+        private ProjectStore _projectStore;
 
         public FixedDocument Document { get; set; }
         public FixedPage ActivePage { get; private set; }
 
 
-        public Project(SelectedElementStore selectedElementStore)
+        public Project(SelectedElementStore selectedElementStore, ProjectStore projectStore)
         {
             _selectedElementStore = selectedElementStore;
+            _projectStore = projectStore;
 
             CreateEmptyDocument();
         }
@@ -51,10 +54,12 @@ namespace ProjektLavor.Models
             fixedPage.Height = ISOA4.Height;
 
             pageContent.Child = fixedPage;
+
             Document.Pages.Add(pageContent);
 
             return pageContent;
         }
+
         public void AddNewTextField(string text)
         {
             if (Document == null || Document.Pages.Count <= 0) return;
@@ -67,6 +72,7 @@ namespace ProjektLavor.Models
 
             Document.Pages.Last().Child.Children.Add(GetImageField(path));
         }
+
         private TextBlock GetTextField(string text)
         {
             TextBlock textBlock = new TextBlock();
@@ -79,11 +85,13 @@ namespace ProjektLavor.Models
 
             MenuItem removeElementMenuItem = new MenuItem();
             removeElementMenuItem.Header = "Törlés";
-            removeElementMenuItem.Command = new RemoveElementCommand(textBlock, _selectedElementStore);
+            removeElementMenuItem.Command = new RemoveElementCommand();
+            removeElementMenuItem.CommandParameter = Tuple.Create((FrameworkElement)textBlock, _selectedElementStore, _projectStore);
             textBlock.ContextMenu.Items.Add(removeElementMenuItem);
 
             return textBlock;
         }
+
         private Image GetImageField(string path)
         {
             Image image = new Image();
@@ -95,12 +103,14 @@ namespace ProjektLavor.Models
 
             MenuItem changeImageMenuItem = new MenuItem();
             changeImageMenuItem.Header = "Kép módosítása";
-            changeImageMenuItem.Command = new ChangeImageSourceCommand(image);
+            changeImageMenuItem.Command = new ChangeImageSourceCommand();
+            changeImageMenuItem.CommandParameter = Tuple.Create(image, _projectStore);
             image.ContextMenu.Items.Add(changeImageMenuItem);
 
             MenuItem removeElementMenuItem = new MenuItem();
             removeElementMenuItem.Header = "Törlés";
-            removeElementMenuItem.Command = new RemoveElementCommand(image, _selectedElementStore);
+            removeElementMenuItem.Command = new RemoveElementCommand();
+            removeElementMenuItem.CommandParameter = Tuple.Create((FrameworkElement)image, _selectedElementStore, _projectStore);
             image.ContextMenu.Items.Add(removeElementMenuItem);
 
             return image;

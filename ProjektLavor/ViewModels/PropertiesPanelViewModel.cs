@@ -12,7 +12,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Xml.Linq;
 
 namespace ProjektLavor.ViewModels
 {
@@ -25,6 +24,59 @@ namespace ProjektLavor.ViewModels
         public bool IsFontChangeAvailable => _element.GetType() == typeof(TextBlock);
 
         private DependencyPropertyDescriptor WidthDependencyPropertyDescriptor;
+
+        private double _elementX;
+        private double _elementY;
+
+        public double ElementX
+        {
+            get
+            {
+                if (double.IsNaN(FixedPage.GetLeft(_element)))
+                {
+                    return Math.Ceiling(_elementX);
+                }
+                return Math.Ceiling(FixedPage.GetLeft(_element));
+            }
+            set
+            {
+                if (_elementX != value)
+                {
+                    if (value > 797) value = 797;
+                    if (value < 0) value = 0;
+                    _projectStore.SaveState();
+                    _elementX = value;
+                    FixedPage.SetLeft(_element, _elementX);
+                    OnPropertyChanged(nameof(ElementX));
+                    _element.UpdateLayout();
+                }
+            }
+        }
+
+        public double ElementY
+        {
+            get
+            {
+                if (double.IsNaN(FixedPage.GetTop(_element)))
+                {
+                    return Math.Ceiling(_elementX);
+                }
+                return Math.Ceiling(FixedPage.GetTop(_element));
+            }
+            set
+            {
+                if (_elementY != value)
+                {
+                    if (value > 1124) value = 1124;
+                    if (value < 0) value = 0;
+                    _projectStore.SaveState();
+                    _elementY = value;
+                    FixedPage.SetTop(_element, _elementY);
+                    OnPropertyChanged(nameof(ElementY));
+                    _element.UpdateLayout();
+                }
+            }
+        }
 
         public double RotationDegree
         {
@@ -176,9 +228,9 @@ namespace ProjektLavor.ViewModels
             {
                 _projectStore.SaveState();
 
-                if (value < 1)
+                if (value < 10)
                 {
-                    value = 1;
+                    value = 10;
                 }
 
                 if (!KeepAspectRatio)
@@ -223,9 +275,9 @@ namespace ProjektLavor.ViewModels
             {
                 _projectStore.SaveState();
 
-                if (value < 1)
+                if (value < 10)
                 {
-                    value = 1;
+                    value = 10;
                 }
 
                 if (!KeepAspectRatio)
