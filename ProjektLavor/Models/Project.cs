@@ -63,14 +63,26 @@ namespace ProjektLavor.Models
         public void AddNewTextField(string text)
         {
             if (Document == null || Document.Pages.Count <= 0) return;
-
-            Document.Pages.Last().Child.Children.Add(GetTextField(text));
+            if (ActivePage == null)
+            {
+                Document.Pages.Last().Child.Children.Add(GetTextField(text));
+            }
+            else
+            {
+                ActivePage.Children.Add(GetTextField(text));
+            }
         }
         public void AddNewImageField(string path)
         {
             if (Document == null || Document.Pages.Count <= 0) return;
-
-            Document.Pages.Last().Child.Children.Add(GetImageField(path));
+            if (ActivePage == null)
+            {
+                Document.Pages.Last().Child.Children.Add(GetImageField(path));
+            }
+            else
+            {
+                ActivePage.Children.Add(GetImageField(path));
+            }
         }
 
         private TextBlock GetTextField(string text)

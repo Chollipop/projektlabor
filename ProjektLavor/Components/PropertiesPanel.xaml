@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ProjektLavor.Components"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="500" d:DesignWidth="800">
     <StackPanel Orientation="Vertical" Background="LightGray">
         <StackPanel.Resources>
             <Style TargetType="TextBox">
@@ -146,6 +146,17 @@
                 </Button>
 
             </Grid>
+        </Grid>
+        <!--#endregion-->
+
+        <!--#region ZIndex -->
+        <Grid HorizontalAlignment="Stretch" Margin="0 5 0 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" HorizontalAlignment="Center" Margin="5" Padding="5" Command="{Binding MoveElementForwardCommand}">Előreküldés</Button>
+            <Button Grid.Column="1" HorizontalAlignment="Center" Margin="5" Padding="5" Command="{Binding MoveElementBackwardCommand}">Hátraküldés</Button>
         </Grid>
         <!--#endregion-->
     </StackPanel>

@@ -48,7 +48,6 @@ namespace ProjektLavor.ViewModels
                     _elementX = value;
                     FixedPage.SetLeft(_element, _elementX);
                     OnPropertyChanged(nameof(ElementX));
-                    _element.UpdateLayout();
                 }
             }
         }
@@ -73,7 +72,6 @@ namespace ProjektLavor.ViewModels
                     _elementY = value;
                     FixedPage.SetTop(_element, _elementY);
                     OnPropertyChanged(nameof(ElementY));
-                    _element.UpdateLayout();
                 }
             }
         }
@@ -120,6 +118,8 @@ namespace ProjektLavor.ViewModels
 
         public ICommand VerticalMirrorCommand { get; set; }
         public ICommand HorizontalMirrorCommand { get; set; }
+        public ICommand MoveElementForwardCommand { get; set; }
+        public ICommand MoveElementBackwardCommand { get; set; }
 
         //private double resizeWidthPercent = 100;
         //public double ResizeWidthPercent
@@ -361,6 +361,8 @@ namespace ProjektLavor.ViewModels
             WidthDependencyPropertyDescriptor.AddValueChanged(_element, UpdateValues);
             VerticalMirrorCommand = new VerticalMirrorCommand(_projectStore, _element);
             HorizontalMirrorCommand = new HorizontalMirrorCommand(_element, _projectStore);
+            MoveElementForwardCommand = new MoveElementForwardCommand(_element, _projectStore);
+            MoveElementBackwardCommand = new MoveElementBackwardCommand(_element, _projectStore);
 
             if (_element.GetType() == typeof(TextBlock))
             {

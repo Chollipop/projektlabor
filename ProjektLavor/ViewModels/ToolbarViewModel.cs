@@ -281,6 +281,7 @@ namespace ProjektLavor.ViewModels
                     )
                 ));
             NewImageElementCommand = new NewImageElementCommand(_projectStore);
+            RunWizardCommand = new RunWizardCommand(_projectStore);
         }
     }
 }

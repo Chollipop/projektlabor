@@ -20,6 +20,27 @@ namespace ProjektLavor.Stores
         private Stack<string> _redoStack;
 
         private SelectedElementStore _selectedElementStore;
+        private string _currentProjectFilePath;
+
+        public string CurrentProjectFilePath
+        {
+            get => _currentProjectFilePath;
+            set
+            {
+                if (_currentProjectFilePath != value)
+                {
+                    _currentProjectFilePath = value;
+                    OnCurrentProjectFilePathChanged();
+                }
+            }
+        }
+
+        public event Action CurrentProjectFilePathChanged;
+
+        private void OnCurrentProjectFilePathChanged()
+        {
+            CurrentProjectFilePathChanged?.Invoke();
+        }
 
         public delegate void NewPageAddedEventHandler(PageContent pageContent);
         public event NewPageAddedEventHandler NewPageAdded;
@@ -65,6 +86,54 @@ namespace ProjektLavor.Stores
             CurrentProjectChanged?.Invoke();
         }
 
+        public void SaveProject(string filePath)
+        {
+            if (CurrentProject?.Document == null) return;
+
+            string documentState = SerializeDocument(CurrentProject.Document);
+            System.IO.File.WriteAllText(filePath, documentState);
+            CurrentProjectFilePath = filePath;
+        }
+
+        public void LoadProject(string filePath)
+        {
+            if (!System.IO.File.Exists(filePath)) return;
+
+            string documentState = System.IO.File.ReadAllText(filePath);
+            FixedDocument deserializedDocument = DeserializeDocument(documentState);
+
+            if (CurrentProject == null)
+            {
+                CurrentProject = new Project(_selectedElementStore, this);
+                for (int i = 1; i < deserializedDocument.Pages.Count; i++)
+                {
+                    CurrentProject.AddBlankPage();
+                }
+            }
+
+            for (int i = 0; i < deserializedDocument.Pages.Count; i++)
+            {
+                var currentPage = CurrentProject.Document.Pages[i].Child;
+                var deserializedPage = deserializedDocument.Pages[i].Child;
+                currentPage.Background = deserializedPage.Background;
+
+                var currentChildren = CurrentProject.Document.Pages[i].Child.Children;
+                var deserializedChildren = deserializedDocument.Pages[i].Child.Children;
+                var deserializedChildrenCopy = new List<UIElement>(deserializedChildren.Cast<UIElement>());
+
+                currentChildren.Clear();
+                foreach (var child in deserializedChildrenCopy)
+                {
+                    deserializedChildren.Remove(child);
+                    currentChildren.Add(child);
+                }
+                deserializedChildrenCopy.Clear();
+            }
+            CurrentProjectFilePath = filePath;
+
+            OnCurrentProjectChanged();
+        }
+
         public void SaveState()
         {
             if (CurrentProject?.Document == null) return;
@@ -74,7 +143,7 @@ namespace ProjektLavor.Stores
             _redoStack.Clear();
         }
 
-        private string SerializeDocument(FixedDocument document)
+        public string SerializeDocument(FixedDocument document)
         {
             RemoveContextMenu(document);
 
@@ -109,7 +178,7 @@ namespace ProjektLavor.Stores
             }
         }
 
-        private FixedDocument DeserializeDocument(string documentState)
+        public FixedDocument DeserializeDocument(string documentState)
         {
             XDocument xDocument = XDocument.Parse(documentState);
             using (XmlReader reader = xDocument.CreateReader())

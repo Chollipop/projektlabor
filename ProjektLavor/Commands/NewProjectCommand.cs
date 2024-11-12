@@ -19,6 +19,7 @@ namespace ProjektLavor.Commands
         public override void Execute(object? parameter)
         {
             _projectStore.NewProject();
+            _projectStore.CurrentProjectFilePath = null;
             _projectStore.ClearUndoRedoStacks();
         }
     }
