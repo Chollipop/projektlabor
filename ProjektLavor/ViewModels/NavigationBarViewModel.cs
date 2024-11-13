@@ -26,14 +26,18 @@ namespace ProjektLavor.ViewModels
         public ICommand RedoCommand { get; }
 
         public ICommand ExitApplicationCommand { get; }
+        public ICommand ExportProjectCommand { get; }
+        public ICommand PrintProjectCommand { get; }
+        public ICommand DeletePageCommand { get; }
 
         public NavigationBarViewModel(IServiceProvider _serviceProvider)
         {
+            SelectedElementStore selectedElementStore = _serviceProvider.GetRequiredService<SelectedElementStore>();
             ProjectStore projectStore = _serviceProvider.GetRequiredService<ProjectStore>();
             NewProjectCommand = new NewProjectCommand(projectStore);
-            //OpenProjectCommand = new OpenProjectCommand();
-            //SaveProjectCommand = new SaveProjectCommand();
-            //SaveAsProjectCommand = new SaveAsProjectCommand();
+            OpenProjectCommand = new OpenProjectCommand(projectStore);
+            SaveProjectCommand = new SaveProjectCommand(projectStore);
+            SaveAsProjectCommand = new SaveAsProjectCommand(projectStore);
             CloseProjectCommand = new CloseProjectCommand(projectStore);
 
             NewPageCommand = new NewPageCommand(projectStore);
@@ -41,8 +45,12 @@ namespace ProjektLavor.ViewModels
             UndoCommand = new UndoCommand(projectStore);
             RedoCommand = new RedoCommand(projectStore);
 
-            ExitApplicationCommand = new ExitApplicationCommand();
-        }
+            ExportProjectCommand = new ExportProjectCommand(projectStore);
+            PrintProjectCommand = new PrintProjectCommand(projectStore);
 
+            ExitApplicationCommand = new ExitApplicationCommand();
+
+            DeletePageCommand = new DeletePageCommand(selectedElementStore, projectStore);
+        }
     }
 }

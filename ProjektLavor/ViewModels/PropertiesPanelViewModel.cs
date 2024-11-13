@@ -24,6 +24,7 @@ namespace ProjektLavor.ViewModels
         public bool IsFontChangeAvailable => _element.GetType() == typeof(TextBlock);
 
         private DependencyPropertyDescriptor WidthDependencyPropertyDescriptor;
+        private DependencyPropertyDescriptor PositionDependencyPropertyDescriptor;
 
         private double _elementX;
         private double _elementY;
@@ -48,7 +49,6 @@ namespace ProjektLavor.ViewModels
                     _elementX = value;
                     FixedPage.SetLeft(_element, _elementX);
                     OnPropertyChanged(nameof(ElementX));
-                    _element.UpdateLayout();
                 }
             }
         }
@@ -73,7 +73,6 @@ namespace ProjektLavor.ViewModels
                     _elementY = value;
                     FixedPage.SetTop(_element, _elementY);
                     OnPropertyChanged(nameof(ElementY));
-                    _element.UpdateLayout();
                 }
             }
         }
@@ -120,6 +119,8 @@ namespace ProjektLavor.ViewModels
 
         public ICommand VerticalMirrorCommand { get; set; }
         public ICommand HorizontalMirrorCommand { get; set; }
+        public ICommand MoveElementForwardCommand { get; set; }
+        public ICommand MoveElementBackwardCommand { get; set; }
 
         //private double resizeWidthPercent = 100;
         //public double ResizeWidthPercent
@@ -359,8 +360,14 @@ namespace ProjektLavor.ViewModels
             _element = element;
             WidthDependencyPropertyDescriptor = DependencyPropertyDescriptor.FromProperty(FrameworkElement.WidthProperty, typeof(FrameworkElement));
             WidthDependencyPropertyDescriptor.AddValueChanged(_element, UpdateValues);
+
+            PositionDependencyPropertyDescriptor = DependencyPropertyDescriptor.FromProperty(FixedPage.LeftProperty, typeof(FrameworkElement));
+            PositionDependencyPropertyDescriptor.AddValueChanged(_element, UpdateValues);
+
             VerticalMirrorCommand = new VerticalMirrorCommand(_projectStore, _element);
             HorizontalMirrorCommand = new HorizontalMirrorCommand(_element, _projectStore);
+            MoveElementForwardCommand = new MoveElementForwardCommand(_element, _projectStore);
+            MoveElementBackwardCommand = new MoveElementBackwardCommand(_element, _projectStore);
 
             if (_element.GetType() == typeof(TextBlock))
             {
@@ -379,6 +386,8 @@ namespace ProjektLavor.ViewModels
         {
             OnPropertyChanged(nameof(ResizeWidth));
             OnPropertyChanged(nameof(ResizeHeight));
+            OnPropertyChanged(nameof(ElementX));
+            OnPropertyChanged(nameof(ElementY));
         }
         public override void Dispose()
         {
