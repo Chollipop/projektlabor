@@ -53,9 +53,15 @@ namespace ProjektLavor.Commands
                                 for (int x = 0; x < width; x++)
                                 {
                                     int index = y * stride + x * 4;
+
+                                    // Ensure index is within bounds of the pixels array
+                                    if (index + 3 >= pixels.Length)
+                                        continue; // Skip this pixel if out of bounds
+
                                     byte b = pixels[index];
                                     byte g = pixels[index + 1];
                                     byte r = pixels[index + 2];
+                                    byte a = pixels[index + 3]; // For images with an alpha channel
 
                                     totalR += r;
                                     totalG += g;

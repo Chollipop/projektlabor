@@ -31,18 +31,11 @@ namespace ProjektLavor.Commands
             // Get the parent container as a Panel (e.g., Canvas, Grid, etc.)
             if (parent is FixedPage parentPage)
             {
-                // Get the index of the selected element
-                int currentIndex = parentPage.Children.IndexOf(_selectedElement);
+                // Remove the selected element from the parent container
+                parentPage.Children.Remove(_selectedElement);
 
-                // Check if the element is not already at the back (i.e., if it's not the first element)
-                if (currentIndex > 0)
-                {
-                    // Remove the selected element from its current position
-                    parentPage.Children.Remove(_selectedElement);
-
-                    // Insert the selected element just before the previous element (i.e., move it one step back)
-                    parentPage.Children.Insert(currentIndex - 1, _selectedElement);
-                }
+                // Reinsert the selected element at the first position (send to back)
+                parentPage.Children.Insert(0, _selectedElement);
             }
         }
     }

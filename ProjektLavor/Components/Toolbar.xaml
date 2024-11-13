@@ -114,6 +114,9 @@
             <Button Command="{Binding OpenNewTextBubbleModalCommand}">
                 <Image MaxWidth="50" Source="/Assets/Icons/chat.png" Stretch="UniformToFill" />
             </Button>
+            <Button Command="{Binding OpenNewTemplateModalCommand}">
+                <Image MaxWidth="50" Source="/Assets/Icons/layout.png" Stretch="UniformToFill" />
+            </Button>
         </StackPanel>
         <!--#endregion-->
     </Grid>

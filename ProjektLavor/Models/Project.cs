@@ -45,8 +45,13 @@ namespace ProjektLavor.Models
             AddNewImageField("Pack://application:,,,/Assets/coconut.jpg");
         }
 
-        public PageContent AddBlankPage()
+        public PageContent AddBlankPage(PageContent newPage = null)
         {
+            if (newPage != null)
+            {
+                Document.Pages.Add(newPage);
+                return newPage;
+            }
             PageContent pageContent = new PageContent();
             FixedPage fixedPage = new FixedPage();
 

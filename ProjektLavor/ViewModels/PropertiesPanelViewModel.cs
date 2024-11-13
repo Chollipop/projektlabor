@@ -229,9 +229,9 @@ namespace ProjektLavor.ViewModels
             {
                 _projectStore.SaveState();
 
-                if (value < 10)
+                if (value < 1)
                 {
-                    value = 10;
+                    value = 1;
                 }
 
                 if (!KeepAspectRatio)
@@ -276,9 +276,9 @@ namespace ProjektLavor.ViewModels
             {
                 _projectStore.SaveState();
 
-                if (value < 10)
+                if (value < 1)
                 {
-                    value = 10;
+                    value = 1;
                 }
 
                 if (!KeepAspectRatio)

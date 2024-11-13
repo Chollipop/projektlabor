@@ -23,6 +23,9 @@
             <DataTemplate DataType="{x:Type viewmodels:CollectionBrowserViewModel}">
                 <views:CollectionBrowserView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewmodels:TemplateBrowserViewModel}">
+                <views:TemplateBrowserView />
+            </DataTemplate>
         </Grid.Resources>
 
         <components:Modal IsOpen="{Binding IsModalOpen}" Panel.ZIndex="9999">

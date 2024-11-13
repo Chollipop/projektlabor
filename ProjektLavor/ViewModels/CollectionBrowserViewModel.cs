@@ -17,14 +17,14 @@ namespace ProjektLavor.ViewModels
         public List<Image> Items { get; set; }
 
         public ICommand CloseModalCommand { get; set; }
-        public ICommand OkModalCommand { get; set; }
+        public ICommand OkCollectionModalCommand { get; set; }
 
         public CollectionBrowserViewModel(ProjectStore projectStore, INavigationService navigationService, List<Image>? items = null)
         {
             Items = items ?? new List<Image>();
 
             CloseModalCommand = new NavigateCommand(navigationService);
-            OkModalCommand = new NavigateCommand(navigationService);
+            OkCollectionModalCommand = new NavigateCommand(navigationService);
 
             OnPropertyChanged(nameof(Items));
         }

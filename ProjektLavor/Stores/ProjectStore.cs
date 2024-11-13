@@ -75,10 +75,10 @@ namespace ProjektLavor.Stores
         {
             CurrentProject = null;
         }
-        public void NewPage()
+        public void NewPage(PageContent newPage = null)
         {
-            PageContent newPage = _currentProject.AddBlankPage();
-            NewPageAdded?.Invoke(newPage);
+            PageContent _newPage = _currentProject.AddBlankPage(newPage);
+            NewPageAdded?.Invoke(_newPage);
         }
 
         private void OnCurrentProjectChanged()
@@ -158,20 +158,20 @@ namespace ProjektLavor.Stores
             { }
         }
 
-        public string SerializeDocument(FixedDocument document)
+        private string SerializeDocument(FixedDocument document)
         {
             try
             {
-            RemoveContextMenu(document);
+                RemoveContextMenu(document);
 
-            XDocument xDocument = new XDocument();
-            using (XmlWriter writer = xDocument.CreateWriter())
-            {
-                System.Windows.Markup.XamlWriter.Save(document, writer);
-            }
+                XDocument xDocument = new XDocument();
+                using (XmlWriter writer = xDocument.CreateWriter())
+                {
+                    System.Windows.Markup.XamlWriter.Save(document, writer);
+                }
 
-            RecreateContextMenu(document);
-            return xDocument.ToString();
+                RecreateContextMenu(document);
+                return xDocument.ToString();
             }
             catch (Exception e)
             {
@@ -200,7 +200,7 @@ namespace ProjektLavor.Stores
             }
         }
 
-        public FixedDocument DeserializeDocument(string documentState)
+        private FixedDocument DeserializeDocument(string documentState)
         {
             try
             {
@@ -253,7 +253,7 @@ namespace ProjektLavor.Stores
             return contextMenu;
         }
 
-        private ContextMenu CreateImageContextMenu(Image image)
+        public ContextMenu CreateImageContextMenu(Image image)
         {
             ContextMenu contextMenu = new ContextMenu();
 
