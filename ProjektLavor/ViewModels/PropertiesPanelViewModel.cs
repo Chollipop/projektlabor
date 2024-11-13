@@ -24,6 +24,7 @@ namespace ProjektLavor.ViewModels
         public bool IsFontChangeAvailable => _element.GetType() == typeof(TextBlock);
 
         private DependencyPropertyDescriptor WidthDependencyPropertyDescriptor;
+        private DependencyPropertyDescriptor PositionDependencyPropertyDescriptor;
 
         private double _elementX;
         private double _elementY;
@@ -359,6 +360,10 @@ namespace ProjektLavor.ViewModels
             _element = element;
             WidthDependencyPropertyDescriptor = DependencyPropertyDescriptor.FromProperty(FrameworkElement.WidthProperty, typeof(FrameworkElement));
             WidthDependencyPropertyDescriptor.AddValueChanged(_element, UpdateValues);
+
+            PositionDependencyPropertyDescriptor = DependencyPropertyDescriptor.FromProperty(FixedPage.LeftProperty, typeof(FrameworkElement));
+            PositionDependencyPropertyDescriptor.AddValueChanged(_element, UpdateValues);
+
             VerticalMirrorCommand = new VerticalMirrorCommand(_projectStore, _element);
             HorizontalMirrorCommand = new HorizontalMirrorCommand(_element, _projectStore);
             MoveElementForwardCommand = new MoveElementForwardCommand(_element, _projectStore);
@@ -381,6 +386,8 @@ namespace ProjektLavor.ViewModels
         {
             OnPropertyChanged(nameof(ResizeWidth));
             OnPropertyChanged(nameof(ResizeHeight));
+            OnPropertyChanged(nameof(ElementX));
+            OnPropertyChanged(nameof(ElementY));
         }
         public override void Dispose()
         {

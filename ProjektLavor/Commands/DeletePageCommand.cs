@@ -69,7 +69,7 @@ namespace ProjektLavor.Commands
                 _projectStore.CurrentProject = new Project(_selectedElementStore, _projectStore);
                 for (int i = 1; i < newPageCount; i++)
                 {
-                    _projectStore.CurrentProject.AddBlankPage();
+                    _projectStore.NewPage();
                 }
 
                 for (int i = 0; i < newPageCount; i++)

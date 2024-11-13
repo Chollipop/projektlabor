@@ -114,7 +114,7 @@ namespace ProjektLavor.Stores
                     CurrentProject = new Project(_selectedElementStore, this);
                     for (int i = 1; i < deserializedDocument.Pages.Count; i++)
                     {
-                        CurrentProject.AddBlankPage();
+                        this.NewPage();
                     }
                 }
 

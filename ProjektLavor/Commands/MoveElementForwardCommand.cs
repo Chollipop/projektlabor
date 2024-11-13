@@ -20,6 +20,8 @@ namespace ProjektLavor.Commands
         {
             if (_selectedElement == null) return;
 
+            _projectStore.SaveState();
+
             // Get the parent container of the selected element
             var parent = _selectedElement.Parent as UIElement;
 
