@@ -173,6 +173,31 @@ namespace ProjektLavor.ViewModels
 
             double x = cPos.X - PointerOffsetInElement.X;
             double y = cPos.Y - PointerOffsetInElement.Y;
+
+            TransformGroup? transformGroup = _selectedElementStore.SelectedElement.RenderTransform as TransformGroup;
+            ScaleTransform? scaleTransform = null;
+            RotateTransform? rotateTransform = null;
+            foreach (var transform in transformGroup?.Children ?? [])
+            {
+                if (transform is ScaleTransform st)
+                    scaleTransform = st;
+                else if (transform is RotateTransform rt)
+                    rotateTransform = rt;
+            }
+            if (scaleTransform != null)
+            {
+                if (scaleTransform.ScaleX < 0)
+                {
+                    double width = double.IsNaN(_selectedElementStore.SelectedElement.Width) ? _selectedElementStore.SelectedElement.ActualWidth : _selectedElementStore.SelectedElement.Width;
+                    x = cPos.X + PointerOffsetInElement.X - Math.Abs(scaleTransform.ScaleX) * width;
+                }
+                if (scaleTransform.ScaleY < 0)
+                {
+                    double height = double.IsNaN(_selectedElementStore.SelectedElement.Height) ? _selectedElementStore.SelectedElement.ActualHeight : _selectedElementStore.SelectedElement.Height;
+                    y = cPos.Y + PointerOffsetInElement.Y - Math.Abs(scaleTransform.ScaleY) * height;
+                }
+            }
+
             FixedPage.SetLeft(_selectedElementStore.SelectedElement, x);
             FixedPage.SetTop(_selectedElementStore.SelectedElement, y);
         }
