@@ -31,15 +31,10 @@ namespace ProjektLavor
             _projectStore = projectStore;
             AdornerVisuals = new VisualCollection(this);
             thumbBounds = new Rectangle() { Stroke = Brushes.Gray, StrokeThickness = 2, StrokeDashArray = { 3, 2 } };
-            thumbTopLeft = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30 };
-            thumbTopRight = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30 };
-            thumbBottomLeft = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30 };
-            thumbBottomRight = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30 };
-
-            thumbTopLeft.Cursor = Cursors.SizeNWSE;
-            thumbTopRight.Cursor = Cursors.SizeNESW;
-            thumbBottomLeft.Cursor = Cursors.SizeNESW;
-            thumbBottomRight.Cursor = Cursors.SizeNWSE;
+            thumbTopLeft = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30, Cursor = Cursors.SizeNWSE, Tag = "TopLeft" };
+            thumbTopRight = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30, Cursor = Cursors.SizeNESW, Tag = "TopRight" };
+            thumbBottomLeft = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30, Cursor = Cursors.SizeNESW, Tag = "BottomLeft" };
+            thumbBottomRight = new Thumb { Background = Brushes.Coral, Width = 30, Height = 30, Cursor = Cursors.SizeNWSE, Tag = "BottomRight" };
 
             AdornerVisuals.Add(thumbBounds);
             AdornerVisuals.Add(thumbTopLeft);
@@ -52,10 +47,10 @@ namespace ProjektLavor
             thumbBottomLeft.DragStarted += Thumb_DragStarted;
             thumbBottomRight.DragStarted += Thumb_DragStarted;
 
-            thumbTopLeft.DragDelta += ThumbTopLeft_DragDelta;
-            thumbTopRight.DragDelta += ThumbTopRight_DragDelta;
-            thumbBottomLeft.DragDelta += ThumbBottomLeft_DragDelta;
-            thumbBottomRight.DragDelta += ThumbBottomRight_DragDelta;
+            thumbTopLeft.DragDelta += Thumb_DragDelta;
+            thumbTopRight.DragDelta += Thumb_DragDelta;
+            thumbBottomLeft.DragDelta += Thumb_DragDelta;
+            thumbBottomRight.DragDelta += Thumb_DragDelta;
 
             thumbTopLeft.DragCompleted += Thumb_DragCompleted;
             thumbTopRight.DragCompleted += Thumb_DragCompleted;
@@ -71,135 +66,122 @@ namespace ProjektLavor
                 _isStateSaved = true;
             }
         }
-
         private void Thumb_DragCompleted(object sender, DragCompletedEventArgs e)
         {
             _isStateSaved = false;
         }
 
-        private void ThumbTopLeft_DragDelta(object sender, DragDeltaEventArgs e)
+        private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             FrameworkElement element = (FrameworkElement)AdornedElement;
             if (element == null) return;
 
-            double newWidth = element.Width;
-            double newHeight = element.Height;
-            double newVerticalChange = e.VerticalChange;
-            double newHorizontalChange = e.HorizontalChange;
-            if (double.IsNaN(newWidth) || newWidth <= 0) newWidth = element.ActualWidth;
-            if (double.IsNaN(newHeight) || newHeight <= 0) newHeight = element.ActualHeight;
+            if (double.IsNaN(element.Width) || element.Width <= 0) element.Width = element.ActualWidth;
+            if (double.IsNaN(element.Height) || element.Height <= 0) element.Height = element.ActualHeight;
 
-            newWidth -= e.HorizontalChange;
-            newHeight -= e.VerticalChange;
-
-            if (newWidth < 10)
+            TransformGroup? transformGroup = element.RenderTransform as TransformGroup;
+            ScaleTransform? scaleTransform = null;
+            RotateTransform? rotateTransform = null;
+            foreach (var transform in transformGroup?.Children ?? [])
             {
-                newHorizontalChange = 0;
-                newWidth = 10;
-            }
-            if (newHeight < 10)
-            {
-                newVerticalChange = 0;
-                newHeight = 10;
+                if (transform is ScaleTransform st)
+                    scaleTransform = st;
+                else if (transform is RotateTransform rt)
+                    rotateTransform = rt;
             }
 
-            double top = FixedPage.GetTop(element) + newVerticalChange;
-            double left = FixedPage.GetLeft(element) + newHorizontalChange;
+            if (rotateTransform == null) rotateTransform = new RotateTransform();
+            Matrix rotateMatrix = rotateTransform.Value;
+            Matrix inverseMatrix = rotateMatrix;
+            inverseMatrix.Invert();
+            Point delta = new Point(e.HorizontalChange, e.VerticalChange);
+            delta = inverseMatrix.Transform(delta);
 
-            element.Width = newWidth;
-            element.Height = newHeight;
-            element.Measure(((FrameworkElement)element.Parent).DesiredSize);
-            FixedPage.SetLeft(element, left);
-            FixedPage.SetTop(element, top);
-            element.UpdateLayout();
-        }
-
-        private void ThumbTopRight_DragDelta(object sender, DragDeltaEventArgs e)
-        {
-            FrameworkElement element = (FrameworkElement)AdornedElement;
-            if (element == null) return;
+            double newHorizontalChange = delta.X;
+            double newVerticalChange = delta.Y;
 
             double newWidth = element.Width;
             double newHeight = element.Height;
-            double newVerticalChange = e.VerticalChange;
-            if (double.IsNaN(newWidth) || newWidth <= 0) newWidth = element.ActualWidth;
-            if (double.IsNaN(newHeight) || newHeight <= 0) newHeight = element.ActualHeight;
-
-            newWidth += e.HorizontalChange;
-            newHeight -= e.VerticalChange;
-
-            if (newWidth < 10) newWidth = 10;
-            if (newHeight < 10)
-            {
-                newVerticalChange = 0;
-                newHeight = 10;
-            }
-
-            double top = FixedPage.GetTop(element) + newVerticalChange;
             double left = FixedPage.GetLeft(element);
-
-            element.Width = newWidth;
-            element.Height = newHeight;
-            element.Measure(((FrameworkElement)element.Parent).DesiredSize);
-            FixedPage.SetLeft(element, left);
-            FixedPage.SetTop(element, top);
-            element.UpdateLayout();
-        }
-
-        private void ThumbBottomLeft_DragDelta(object sender, DragDeltaEventArgs e)
-        {
-            FrameworkElement element = (FrameworkElement)AdornedElement;
-            if (element == null) return;
-
-            double newWidth = element.Width;
-            double newHeight = element.Height;
-            double newHorizontalChange = e.HorizontalChange;
-            if (double.IsNaN(newWidth) || newWidth <= 0) newWidth = element.ActualWidth;
-            if (double.IsNaN(newHeight) || newHeight <= 0) newHeight = element.ActualHeight;
-
-            newWidth -= e.HorizontalChange;
-            newHeight += e.VerticalChange;
-
-            if (newWidth < 10)
-            {
-                newHorizontalChange = 0;
-                newWidth = 10;
-            }
-            if (newHeight < 10) newHeight = 10;
-
             double top = FixedPage.GetTop(element);
-            double left = FixedPage.GetLeft(element) + newHorizontalChange;
 
-            element.Width = newWidth;
-            element.Height = newHeight;
-            element.Measure(((FrameworkElement)element.Parent).DesiredSize);
-            FixedPage.SetLeft(element, left);
-            FixedPage.SetTop(element, top);
-            element.UpdateLayout();
-        }
-
-        private void ThumbBottomRight_DragDelta(object sender, DragDeltaEventArgs e)
-        {
-            FrameworkElement element = (FrameworkElement)AdornedElement;
-            if (element == null) return;
-
-            double newWidth = element.Width;
-            double newHeight = element.Height;
-            if (double.IsNaN(newWidth) || newWidth <= 0) newWidth = element.ActualWidth;
-            if (double.IsNaN(newHeight) || newHeight <= 0) newHeight = element.ActualHeight;
-
-            newWidth += e.HorizontalChange;
-            newHeight += e.VerticalChange;
+            Thumb? thumb = sender as Thumb;
+            string? thumbTag = thumb?.Tag as string;
+            switch (thumbTag)
+            {
+                case "TopLeft":
+                    newWidth -= newHorizontalChange;
+                    newHeight -= newVerticalChange;
+                    left += newHorizontalChange;
+                    top += newVerticalChange;
+                    break;
+                case "TopRight":
+                    newWidth += newHorizontalChange;
+                    newHeight -= newVerticalChange;
+                    top += newVerticalChange;
+                    break;
+                case "BottomLeft":
+                    newWidth -= newHorizontalChange;
+                    newHeight += newVerticalChange;
+                    left += newHorizontalChange;
+                    break;
+                case "BottomRight":
+                    newWidth += newHorizontalChange;
+                    newHeight += newVerticalChange;
+                    break;
+            }
 
             if (newWidth < 10) newWidth = 10;
             if (newHeight < 10) newHeight = 10;
+            //if (newWidth < 10)
+            //{
+            //    if (thumbTag == "TopLeft" || thumbTag == "BottomLeft")
+            //        left -= 10 - newWidth;
+            //    newWidth = 10;
+            //}
 
-            double top = FixedPage.GetTop(element);
-            double left = FixedPage.GetLeft(element);
+            //if (newHeight < 10)
+            //{
+            //    if (thumbTag == "TopLeft" || thumbTag == "TopRight")
+            //        top -= 10 - newHeight;
+            //    newHeight = 10;
+            //}
+            if (scaleTransform != null)
+            {
+                newWidth /= Math.Abs(scaleTransform.ScaleX);
+                newHeight /= Math.Abs(scaleTransform.ScaleY);
+            }
+
+            if (scaleTransform != null)
+            {
+                if (scaleTransform.ScaleX < 0)
+                {
+                    switch (thumbTag)
+                    {
+                        case "TopLeft":
+                            left -= 2 * newHorizontalChange;
+                            break;
+                        case "BottomLeft":
+                            left -= 2 * newHorizontalChange;
+                            break;
+                    }
+                }
+                if (scaleTransform.ScaleY < 0)
+                {
+                    switch (thumbTag)
+                    {
+                        case "TopLeft":
+                            top -= 2 * newVerticalChange;
+                            break;
+                        case "TopRight":
+                            top -= 2 * newVerticalChange;
+                            break;
+                    }
+                }
+            }
 
             element.Width = newWidth;
             element.Height = newHeight;
-            element.Measure(((FrameworkElement)element.Parent).DesiredSize);
             FixedPage.SetLeft(element, left);
             FixedPage.SetTop(element, top);
             element.UpdateLayout();
