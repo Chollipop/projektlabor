@@ -34,4 +34,9 @@
 
         <ContentControl Content="{Binding CurrentViewModel}" IsTabStop="False"/>
     </Grid>
+    
+    <Window.InputBindings>
+        <KeyBinding Key="Z" Modifiers="Control" Command="{Binding UndoCommand}" />
+        <KeyBinding Key="Y" Modifiers="Control" Command="{Binding RedoCommand}" />
+    </Window.InputBindings>
 </Window>

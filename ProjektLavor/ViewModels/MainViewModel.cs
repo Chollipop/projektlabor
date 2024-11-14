@@ -1,9 +1,11 @@
-﻿using ProjektLavor.Stores;
+﻿using ProjektLavor.Commands;
+using ProjektLavor.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace ProjektLavor.ViewModels
 {
@@ -12,6 +14,10 @@ namespace ProjektLavor.ViewModels
         private readonly NavigationStore _navigationStore;
         private readonly ModalNavigationStore _modalNavigationStore;
         private readonly ProjectStore _projectStore;
+
+        public ICommand UndoCommand { get; }
+        public ICommand RedoCommand { get; }
+        public ICommand RemoveElementCommand { get; }
 
         public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel;
         public ViewModelBase CurrentModalViewModel => _modalNavigationStore.CurrentViewModel;
@@ -30,6 +36,9 @@ namespace ProjektLavor.ViewModels
             _modalNavigationStore.CurrentViewModelChanged += _modalNavigationStore_CurrentViewModelChanged;
             _navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged;
             _projectStore.CurrentProjectFilePathChanged += OnCurrentProjectFilePathChanged;
+
+            UndoCommand = new UndoCommand(projectStore);
+            RedoCommand = new RedoCommand(projectStore);
         }
 
         private void _modalNavigationStore_CurrentViewModelChanged()
