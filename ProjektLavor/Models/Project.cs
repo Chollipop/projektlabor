@@ -79,14 +79,18 @@ namespace ProjektLavor.Models
         }
         public void AddNewImageField(string path)
         {
+            AddNewImageField(new BitmapImage(new Uri(path)));
+        }
+        public void AddNewImageField(ImageSource source)
+        {
             if (Document == null || Document.Pages.Count <= 0) return;
             if (ActivePage == null)
             {
-                Document.Pages.Last().Child.Children.Add(GetImageField(path));
+                Document.Pages.Last().Child.Children.Add(GetImageField(source));
             }
             else
             {
-                ActivePage.Children.Add(GetImageField(path));
+                ActivePage.Children.Add(GetImageField(source));
             }
         }
 
@@ -109,10 +113,10 @@ namespace ProjektLavor.Models
             return textBlock;
         }
 
-        private Image GetImageField(string path)
+        private Image GetImageField(ImageSource source)
         {
             Image image = new Image();
-            image.Source = new BitmapImage(new Uri(path));
+            image.Source = source;
             image.Stretch = Stretch.Fill;
             image.Cursor = Cursors.SizeAll;
 

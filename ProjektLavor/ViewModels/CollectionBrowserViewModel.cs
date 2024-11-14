@@ -15,6 +15,7 @@ namespace ProjektLavor.ViewModels
     public class CollectionBrowserViewModel : ViewModelBase
     {
         public List<Image> Items { get; set; }
+        public Image? SelectedImage { get; set; }
 
         public ICommand CloseModalCommand { get; set; }
         public ICommand OkCollectionModalCommand { get; set; }
@@ -24,7 +25,7 @@ namespace ProjektLavor.ViewModels
             Items = items ?? new List<Image>();
 
             CloseModalCommand = new NavigateCommand(navigationService);
-            OkCollectionModalCommand = new NavigateCommand(navigationService);
+            OkCollectionModalCommand = new OkCollectionModalCommand(this, navigationService, projectStore);
 
             OnPropertyChanged(nameof(Items));
         }
