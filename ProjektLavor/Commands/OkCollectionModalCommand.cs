@@ -21,7 +21,7 @@ namespace ProjektLavor.Commands
         {
             if(_viewModel?.SelectedImage == null) return;
 
-            _projectStore.CurrentProject.AddNewImageField(_viewModel.SelectedImage.Source.Clone());
+            _projectStore.CurrentProject.AddNewImageField(_viewModel.SelectedImage.Source.Clone(), true);
             _navigationService.Navigate();
         }
     }

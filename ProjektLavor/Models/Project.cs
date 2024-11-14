@@ -81,7 +81,7 @@ namespace ProjektLavor.Models
         {
             AddNewImageField(new BitmapImage(new Uri(path)));
         }
-        public void AddNewImageField(ImageSource source)
+        public void AddNewImageField(ImageSource source, bool IgnoreWizard = false)
         {
             if (Document == null || Document.Pages.Count <= 0) return;
 
@@ -89,11 +89,13 @@ namespace ProjektLavor.Models
 
             if (ActivePage == null)
             {
-                Document.Pages.Last().Child.Children.Add(GetImageField(source));
+                var newImageField = Document.Pages.Last().Child.Children.Add(GetImageField(source));
+                if (IgnoreWizard) ((Image)Document.Pages.Last().Child.Children[newImageField]).Tag = "ignore_wizard";
             }
             else
             {
-                ActivePage.Children.Add(GetImageField(source));
+                var newImageField = ActivePage.Children.Add(GetImageField(source));
+                if (IgnoreWizard) ((Image)ActivePage.Children[newImageField]).Tag = "ignore_wizard";
             }
         }
 
