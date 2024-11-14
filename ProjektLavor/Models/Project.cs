@@ -84,6 +84,9 @@ namespace ProjektLavor.Models
         public void AddNewImageField(ImageSource source)
         {
             if (Document == null || Document.Pages.Count <= 0) return;
+
+            _projectStore.SaveState();
+
             if (ActivePage == null)
             {
                 Document.Pages.Last().Child.Children.Add(GetImageField(source));
