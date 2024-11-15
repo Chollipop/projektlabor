@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -75,6 +76,8 @@ namespace ProjektLavor
         {
             FrameworkElement element = (FrameworkElement)AdornedElement;
             if (element == null) return;
+            FrameworkElement elementToPosition = element;
+            if (element is Image) elementToPosition = (FrameworkElement)element.Parent;
 
             if (double.IsNaN(element.Width) || element.Width <= 0) element.Width = element.ActualWidth;
             if (double.IsNaN(element.Height) || element.Height <= 0) element.Height = element.ActualHeight;
@@ -102,8 +105,8 @@ namespace ProjektLavor
 
             double newWidth = element.Width;
             double newHeight = element.Height;
-            double left = FixedPage.GetLeft(element);
-            double top = FixedPage.GetTop(element);
+            double left = FixedPage.GetLeft(elementToPosition);
+            double top = FixedPage.GetTop(elementToPosition);
 
             Thumb? thumb = sender as Thumb;
             string? thumbTag = thumb?.Tag as string;
@@ -182,8 +185,9 @@ namespace ProjektLavor
 
             element.Width = newWidth;
             element.Height = newHeight;
-            FixedPage.SetLeft(element, left);
-            FixedPage.SetTop(element, top);
+            FixedPage.SetLeft(elementToPosition, left);
+            FixedPage.SetTop(elementToPosition, top);
+            elementToPosition.UpdateLayout();
             element.UpdateLayout();
         }
 

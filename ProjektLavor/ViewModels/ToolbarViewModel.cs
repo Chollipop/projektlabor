@@ -137,9 +137,9 @@ namespace ProjektLavor.ViewModels
                     var fixedPage = (FixedPage)XamlReader.Load(xmlReader);
                     foreach (var child in fixedPage.Children)
                     {
-                        if (child is Image)
+                        if (child is AdornerDecorator decorator)
                         {
-                            var image = (Image)child;
+                            var image = (Image)decorator.Child;
                             image.Source = new BitmapImage(new Uri("Pack://application:,,,/Assets/Templates/placeholder.png"));
                             image.ContextMenu = _projectStore.CreateImageContextMenu(image);
                         }

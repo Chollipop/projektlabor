@@ -20,7 +20,7 @@ namespace ProjektLavor.Commands
 
             FixedPage fixedPage = (FixedPage)element.Parent;
 
-            foreach (var item in AdornerLayer.GetAdornerLayer(fixedPage)?.GetAdorners(selectedElementStore.SelectedElement) ?? [])
+            foreach (var item in AdornerLayer.GetAdornerLayer(element)?.GetAdorners(selectedElementStore.SelectedElement) ?? [])
             {
                 if (item is FrameAdorner)
                 {

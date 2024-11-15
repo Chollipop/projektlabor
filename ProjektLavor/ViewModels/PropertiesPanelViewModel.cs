@@ -33,11 +33,12 @@ namespace ProjektLavor.ViewModels
         {
             get
             {
-                if (double.IsNaN(FixedPage.GetLeft(_element)))
+                double left = FixedPage.GetLeft((UIElement)(_element is Image ? _element.Parent : _element));
+                if (double.IsNaN(left))
                 {
                     return Math.Ceiling(_elementX);
                 }
-                return Math.Ceiling(FixedPage.GetLeft(_element));
+                return Math.Ceiling(left);
             }
             set
             {
@@ -47,7 +48,7 @@ namespace ProjektLavor.ViewModels
                     if (value < 0) value = 0;
                     _projectStore.SaveState();
                     _elementX = value;
-                    FixedPage.SetLeft(_element, _elementX);
+                    FixedPage.SetLeft((UIElement)(_element is Image ? _element.Parent : _element), _elementX);
                     OnPropertyChanged(nameof(ElementX));
                 }
             }
@@ -57,11 +58,12 @@ namespace ProjektLavor.ViewModels
         {
             get
             {
-                if (double.IsNaN(FixedPage.GetTop(_element)))
+                double top = FixedPage.GetTop((UIElement)(_element is Image ? _element.Parent : _element));
+                if (double.IsNaN(top))
                 {
                     return Math.Ceiling(_elementX);
                 }
-                return Math.Ceiling(FixedPage.GetTop(_element));
+                return Math.Ceiling(top);
             }
             set
             {
@@ -71,7 +73,7 @@ namespace ProjektLavor.ViewModels
                     if (value < 0) value = 0;
                     _projectStore.SaveState();
                     _elementY = value;
-                    FixedPage.SetTop(_element, _elementY);
+                    FixedPage.SetTop((UIElement)(_element is Image ? _element.Parent : _element), _elementY);
                     OnPropertyChanged(nameof(ElementY));
                 }
             }
@@ -362,7 +364,7 @@ namespace ProjektLavor.ViewModels
             WidthDependencyPropertyDescriptor.AddValueChanged(_element, UpdateValues);
 
             PositionDependencyPropertyDescriptor = DependencyPropertyDescriptor.FromProperty(FixedPage.LeftProperty, typeof(FrameworkElement));
-            PositionDependencyPropertyDescriptor.AddValueChanged(_element, UpdateValues);
+            PositionDependencyPropertyDescriptor.AddValueChanged((_element is Image ? _element.Parent : _element), UpdateValues);
 
             VerticalMirrorCommand = new VerticalMirrorCommand(_projectStore, _element);
             HorizontalMirrorCommand = new HorizontalMirrorCommand(_element, _projectStore);

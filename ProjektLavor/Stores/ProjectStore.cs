@@ -175,9 +175,9 @@ namespace ProjektLavor.Stores
                         {
                             textBlock.ContextMenu = null;
                         }
-                        if (element is Image image)
+                        if (element is AdornerDecorator decorator)
                         {
-                            image.ContextMenu = null;
+                            ((Image)decorator.Child).ContextMenu = null;
                         }
                     }
                 }
@@ -210,12 +210,15 @@ namespace ProjektLavor.Stores
                 {
                     if (page.Child is FixedPage fixedPage)
                     {
-                        foreach (var element in fixedPage.Children)
+                        foreach (FrameworkElement e in fixedPage.Children)
                         {
-                            var adornerLayer = AdornerLayer.GetAdornerLayer((UIElement)element);
+                            FrameworkElement element = e;
+                            if (element is AdornerDecorator) element = (FrameworkElement)((AdornerDecorator)element).Child;
+
+                            var adornerLayer = AdornerLayer.GetAdornerLayer(element);
                             if (adornerLayer != null)
                             {
-                                var adorners = adornerLayer.GetAdorners((UIElement)element);
+                                var adorners = adornerLayer.GetAdorners(element);
                                 if (adorners != null)
                                 {
                                     foreach (var adorner in adorners)
@@ -265,7 +268,7 @@ namespace ProjektLavor.Stores
                         {
 
                             bool hasFrameAdorner = false;
-                            foreach (var item in AdornerLayer.GetAdornerLayer(fixedPage)?.GetAdorners(adorner.Item2) ?? [])
+                            foreach (var item in AdornerLayer.GetAdornerLayer(adorner.Item2)?.GetAdorners(adorner.Item2) ?? [])
                             {
                                 if (item is FrameAdorner)
                                 {
@@ -275,7 +278,7 @@ namespace ProjektLavor.Stores
                             }
                             if(!hasFrameAdorner)
                             {
-                                AdornerLayer.GetAdornerLayer(fixedPage)?.Add(new FrameAdorner(adorner.Item2, adorner.Item3));
+                                AdornerLayer.GetAdornerLayer(adorner.Item2)?.Add(new FrameAdorner(adorner.Item2, adorner.Item3));
                             }
                         }
                     }
@@ -310,8 +313,11 @@ namespace ProjektLavor.Stores
                     {
                         if (page.Child is FixedPage fixedPage)
                         {
-                            foreach (var element in fixedPage.Children)
+                            foreach (FrameworkElement e in fixedPage.Children)
                             {
+                                FrameworkElement element = e;
+                                if (element is AdornerDecorator) element = (FrameworkElement)((AdornerDecorator)element).Child;
+
                                 if (element is Image image && image.Tag.ToString() == frameAdornerState.AdornedElement)
                                 {
                                     adorners.Add(new Tuple<string, Image, BitmapImage>(fixedPage.Tag.ToString(), image, new BitmapImage(new Uri(frameAdornerState.SourceUri))));
@@ -342,8 +348,9 @@ namespace ProjektLavor.Stores
                         {
                             textBlock.ContextMenu = CreateTextBlockContextMenu(textBlock);
                         }
-                        if (element is Image image)
+                        if (element is AdornerDecorator decorator)
                         {
+                            Image image = (Image)decorator.Child;
                             image.ContextMenu = CreateImageContextMenu(image);
                         }
                     }

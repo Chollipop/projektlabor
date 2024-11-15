@@ -89,18 +89,17 @@ namespace ProjektLavor.Models
 
             _projectStore.SaveState();
 
-            if (ActivePage == null)
-            {
-                var newImageField = Document.Pages.Last().Child.Children.Add(GetImageField(source));
-                ((Image)Document.Pages.Last().Child.Children[newImageField]).Tag = Guid.NewGuid().ToString();
-                if (IgnoreWizard) ((Image)Document.Pages.Last().Child.Children[newImageField]).Tag = "ignore_wizard";
-            }
-            else
-            {
-                var newImageField = ActivePage.Children.Add(GetImageField(source));
-                ((Image)ActivePage.Children[newImageField]).Tag = Guid.NewGuid().ToString();
-                if (IgnoreWizard) ((Image)ActivePage.Children[newImageField]).Tag = "ignore_wizard";
-            }
+            FixedPage page = Document.Pages.Last().Child;
+            if (ActivePage != null) page = ActivePage;
+
+            AdornerDecorator adornerDecorator = new AdornerDecorator();
+            Image image = GetImageField(source);
+            adornerDecorator.Child = image;
+            
+            image.Tag = Guid.NewGuid().ToString();
+            if (IgnoreWizard) image.Tag = "ignore_wizard";
+            
+            var newImageField = page.Children.Add(adornerDecorator);
         }
 
         private TextBlock GetTextField(string text)

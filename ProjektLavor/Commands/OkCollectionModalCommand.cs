@@ -31,19 +31,19 @@ namespace ProjektLavor.Commands
             else
             {
                 _projectStore.SaveState();
-
-                foreach (var item in AdornerLayer.GetAdornerLayer((FixedPage)_selectedElementStore.SelectedElement.Parent)?.GetAdorners(_selectedElementStore.SelectedElement) ?? [])
+                AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(_selectedElementStore.SelectedElement);
+                foreach (var item in adornerLayer?.GetAdorners(_selectedElementStore.SelectedElement) ?? [])
                 {
                     if (item is FrameAdorner)
                     {
-                        AdornerLayer.GetAdornerLayer((FixedPage)_selectedElementStore.SelectedElement.Parent)?.Remove(item);
+                        adornerLayer?.Remove(item);
                     }
                 }
 
-                AdornerLayer.GetAdornerLayer((FixedPage)_selectedElementStore.SelectedElement.Parent).Add(new FrameAdorner(_selectedElementStore.SelectedElement, _viewModel.SelectedImage.Source.Clone()));
+                adornerLayer?.Add(new FrameAdorner(_selectedElementStore.SelectedElement, _viewModel.SelectedImage.Source.Clone()));
             }
 
-            _selectedElementStore.SelectedElement = null;
+            //_selectedElementStore.SelectedElement = null;
             _navigationService.Navigate();
         }
     }
