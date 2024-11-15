@@ -41,6 +41,7 @@ namespace ProjektLavor.ViewModels
         public bool HasSelectedItem => _selectedElementStore?.SelectedElement != null;
 
         public ICommand ApplyPropertiesCommand { get; set; }
+        public ICommand ScrollChangedCommand { get; set; }
 
         public int DocumentZoom { get; set; } = 80;
 
@@ -59,6 +60,7 @@ namespace ProjektLavor.ViewModels
             _selectedElementStore.SelectedElementChanged += _selectedElementStore_SelectedElementChanged;
 
             ApplyPropertiesCommand = new ApplyPropertiesCommand(_selectedElementStore);
+            ScrollChangedCommand = new ScrollChangedCommand(_projectStore);
         }
 
         private void _selectedElementStore_PreviewSelectedElementChanged(object sender, PreviewSelectedElementChangedEventArgs e)
@@ -236,6 +238,12 @@ namespace ProjektLavor.ViewModels
                 pageContent.Child.MouseUp += FixedPage_MouseUp;
                 pageContent.Child.MouseMove += FixedPage_MouseMove;
             }
+
+            Task.Run(() =>
+            {
+                Thread.Sleep(1000);
+                Application.Current.Dispatcher.Invoke(() => _projectStore.AddAdorners());
+            });
         }
 
         private void _projectStore_NewPageAdded(PageContent pageContent)

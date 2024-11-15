@@ -30,6 +30,8 @@ namespace ProjektLavor.Commands
             }
             else
             {
+                _projectStore.SaveState();
+
                 AdornerLayer.GetAdornerLayer((FixedPage)_selectedElementStore.SelectedElement.Parent).Add(new FrameAdorner(_selectedElementStore.SelectedElement, _viewModel.SelectedImage.Source.Clone()));
             }
             _navigationService.Navigate();

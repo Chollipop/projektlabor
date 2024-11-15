@@ -11,6 +11,10 @@ using System.Windows;
 using ProjektLavor.Commands;
 using System.Windows.Controls;
 using System.Reflection.Metadata;
+using System.IO;
+using System.Windows.Media.Imaging;
+using System.Xml.Serialization;
+using System.Windows.Media;
 
 namespace ProjektLavor.Stores
 {
@@ -123,6 +127,7 @@ namespace ProjektLavor.Stores
                     var currentPage = CurrentProject.Document.Pages[i].Child;
                     var deserializedPage = deserializedDocument.Pages[i].Child;
                     currentPage.Background = deserializedPage.Background;
+                    currentPage.Tag = deserializedPage.Tag;
 
                     var currentChildren = CurrentProject.Document.Pages[i].Child.Children;
                     var deserializedChildren = deserializedDocument.Pages[i].Child.Children;
@@ -158,27 +163,6 @@ namespace ProjektLavor.Stores
             { }
         }
 
-        private string SerializeDocument(FixedDocument document)
-        {
-            try
-            {
-                RemoveContextMenu(document);
-
-                XDocument xDocument = new XDocument();
-                using (XmlWriter writer = xDocument.CreateWriter())
-                {
-                    System.Windows.Markup.XamlWriter.Save(document, writer);
-                }
-
-                RecreateContextMenu(document);
-                return xDocument.ToString();
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-        }
-
         private void RemoveContextMenu(FixedDocument document)
         {
             foreach (var page in document.Pages)
@@ -200,17 +184,145 @@ namespace ProjektLavor.Stores
             }
         }
 
+        // Helper class for FrameAdorner state
+        [Serializable]
+        public class FrameAdornerState
+        {
+            public string AdornedElement { get; set; }
+            public string SourceUri { get; set; }
+        }
+
+        private string SerializeDocument(FixedDocument document)
+        {
+            try
+            {
+                RemoveContextMenu(document);
+
+                XDocument xDocument = new XDocument(new XElement("Document"));
+
+                using (XmlWriter writer = xDocument.Root.CreateWriter())
+                {
+                    System.Windows.Markup.XamlWriter.Save(document, writer);
+                }
+
+                // Serialize FrameAdorner states
+                foreach (var page in document.Pages)
+                {
+                    if (page.Child is FixedPage fixedPage)
+                    {
+                        foreach (var element in fixedPage.Children)
+                        {
+                            var adornerLayer = AdornerLayer.GetAdornerLayer((UIElement)element);
+                            if (adornerLayer != null)
+                            {
+                                var adorners = adornerLayer.GetAdorners((UIElement)element);
+                                if (adorners != null)
+                                {
+                                    foreach (var adorner in adorners)
+                                    {
+                                        if (adorner is FrameAdorner frameAdorner)
+                                        {
+                                            var frameAdornerState = new FrameAdornerState
+                                            {
+                                                AdornedElement = ((Image)element).Tag?.ToString() ?? string.Empty,
+                                                SourceUri = frameAdorner.ImageSource.ToString()
+                                            };
+
+                                            XElement adornerElement = new XElement("FrameAdornerState",
+                                                new XElement("AdornedElement", frameAdornerState.AdornedElement),
+                                                new XElement("SourceUri", frameAdornerState.SourceUri)
+                                            );
+
+                                            xDocument.Root.Add(adornerElement);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                RecreateContextMenu(document);
+                return xDocument.ToString();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private List<Tuple<string, Image, BitmapImage>> adorners = new List<Tuple<string, Image, BitmapImage>>();
+
+        public void AddAdorners()
+        {
+            foreach (var adorner in adorners)
+            {
+                foreach (var page in CurrentProject.Document.Pages)
+                {
+                    if (page.Child is FixedPage fixedPage)
+                    {
+                        if (fixedPage.Tag?.ToString() == adorner.Item1)
+                        {
+
+                            bool hasFrameAdorner = false;
+                            foreach (var item in AdornerLayer.GetAdornerLayer(fixedPage)?.GetAdorners(adorner.Item2) ?? [])
+                            {
+                                if (item is FrameAdorner)
+                                {
+                                    hasFrameAdorner = true;
+                                    break;
+                                }
+                            }
+                            if(!hasFrameAdorner)
+                            {
+                                AdornerLayer.GetAdornerLayer(fixedPage)?.Add(new FrameAdorner(adorner.Item2, adorner.Item3));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         private FixedDocument DeserializeDocument(string documentState)
         {
             try
             {
                 XDocument xDocument = XDocument.Parse(documentState);
-                using (XmlReader reader = xDocument.CreateReader())
+                XElement fixedDocumentElement = (XElement)xDocument.Root.FirstNode;
+
+                FixedDocument document;
+                using (XmlReader reader = fixedDocumentElement.CreateReader())
                 {
-                    FixedDocument document = (FixedDocument)System.Windows.Markup.XamlReader.Load(reader);
-                    RecreateContextMenu(document);
-                    return document;
+                    document = (FixedDocument)System.Windows.Markup.XamlReader.Load(reader);
                 }
+
+                 adorners = new List<Tuple<string, Image, BitmapImage>>();
+                // Deserialize FrameAdorner states
+                foreach (var adornerElement in xDocument.Root.Elements("FrameAdornerState"))
+                {
+                    var frameAdornerState = new FrameAdornerState
+                    {
+                        AdornedElement = adornerElement.Element("AdornedElement").Value,
+                        SourceUri = adornerElement.Element("SourceUri").Value
+                    };
+
+                    foreach (var page in document.Pages)
+                    {
+                        if (page.Child is FixedPage fixedPage)
+                        {
+                            foreach (var element in fixedPage.Children)
+                            {
+                                if (element is Image image && image.Tag.ToString() == frameAdornerState.AdornedElement)
+                                {
+                                    adorners.Add(new Tuple<string, Image, BitmapImage>(fixedPage.Tag.ToString(), image, new BitmapImage(new Uri(frameAdornerState.SourceUri))));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                RecreateContextMenu(document);
+                return document;
             }
             catch (Exception e)
             {
@@ -305,7 +417,10 @@ namespace ProjektLavor.Stores
                         }
                         deserializedChildrenCopy.Clear();
                     }
+
                     OnCurrentProjectChanged();
+
+                    AddAdorners();
                 }
             }
             catch (Exception e)
@@ -344,7 +459,10 @@ namespace ProjektLavor.Stores
                         }
                         deserializedChildrenCopy.Clear();
                     }
+
                     OnCurrentProjectChanged();
+
+                    AddAdorners();
                 }
             }
             catch (Exception e)

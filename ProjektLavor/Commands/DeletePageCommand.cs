@@ -49,6 +49,7 @@ namespace ProjektLavor.Commands
                         var newPage = newProject.Document.Pages[newIndex].Child;
                         var oldPage = _projectStore.CurrentProject.Document.Pages[i].Child;
                         newPage.Background = oldPage.Background;
+                        newPage.Tag = oldPage.Tag;
 
                         var newChildren = newProject.Document.Pages[newIndex].Child.Children;
                         var oldChildren = _projectStore.CurrentProject.Document.Pages[i].Child.Children;
@@ -79,6 +80,7 @@ namespace ProjektLavor.Commands
                         var newPage = _projectStore.CurrentProject.Document.Pages[i].Child;
                         var oldPage = newProject.Document.Pages[i].Child;
                         newPage.Background = oldPage.Background;
+                        newPage.Tag = oldPage.Tag;
 
                         var newChildren = _projectStore.CurrentProject.Document.Pages[i].Child.Children;
                         var oldChildren = newProject.Document.Pages[i].Child.Children;

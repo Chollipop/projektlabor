@@ -58,6 +58,8 @@ namespace ProjektLavor.Models
             fixedPage.Width = ISOA4.Width;
             fixedPage.Height = ISOA4.Height;
 
+            fixedPage.Tag = Guid.NewGuid().ToString();
+
             pageContent.Child = fixedPage;
 
             Document.Pages.Add(pageContent);
@@ -90,11 +92,13 @@ namespace ProjektLavor.Models
             if (ActivePage == null)
             {
                 var newImageField = Document.Pages.Last().Child.Children.Add(GetImageField(source));
+                ((Image)Document.Pages.Last().Child.Children[newImageField]).Tag = Guid.NewGuid().ToString();
                 if (IgnoreWizard) ((Image)Document.Pages.Last().Child.Children[newImageField]).Tag = "ignore_wizard";
             }
             else
             {
                 var newImageField = ActivePage.Children.Add(GetImageField(source));
+                ((Image)ActivePage.Children[newImageField]).Tag = Guid.NewGuid().ToString();
                 if (IgnoreWizard) ((Image)ActivePage.Children[newImageField]).Tag = "ignore_wizard";
             }
         }
