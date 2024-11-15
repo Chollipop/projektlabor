@@ -76,6 +76,7 @@ namespace ProjektLavor.ViewModels
                     () => _projectStore.CurrentProject == null ? null : new CollectionBrowserViewModel(
                         _projectStore,
                         new CloseModalNavigationService(modalNavigationStore),
+                        _selectedElementStore,
                         new List<Image>()
                         {
                             new Image(){Source=new BitmapImage(new Uri("Pack://application:,,,/Assets/Frames/frame.png"))},
@@ -139,7 +140,8 @@ namespace ProjektLavor.ViewModels
                             new Image(){Source=new BitmapImage(new Uri("Pack://application:,,,/Assets/Frames/frame2.png"))},
                             new Image(){Source=new BitmapImage(new Uri("Pack://application:,,,/Assets/Frames/frame3.png"))},
                             new Image(){Source=new BitmapImage(new Uri("Pack://application:,,,/Assets/Frames/frame4.png"))}
-                        }
+                        },
+                        true
                     )
                 ));
             OpenNewTextBubbleModalCommand = new NavigateCommand(
@@ -148,6 +150,7 @@ namespace ProjektLavor.ViewModels
                     () => _projectStore.CurrentProject == null ? null : new CollectionBrowserViewModel(
                         _projectStore,
                         new CloseModalNavigationService(modalNavigationStore),
+                        _selectedElementStore,
                         new List<Image>()
                         {
                             new Image(){Source=new BitmapImage(new Uri("Pack://application:,,,/Assets/Bubbles/bubble1.png"))},

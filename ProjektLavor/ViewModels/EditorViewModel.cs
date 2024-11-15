@@ -214,7 +214,8 @@ namespace ProjektLavor.ViewModels
 
             foreach (Adorner adorner in adorners)
             {
-                adornerLayer.Remove(adorner);
+                if (adorner is ResizeAdorner)
+                    adornerLayer.Remove(adorner);
             }
         }
 
