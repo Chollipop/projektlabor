@@ -58,6 +58,8 @@ namespace ProjektLavor.Models
             fixedPage.Width = ISOA4.Width;
             fixedPage.Height = ISOA4.Height;
 
+            fixedPage.Tag = Guid.NewGuid().ToString();
+
             pageContent.Child = fixedPage;
 
             Document.Pages.Add(pageContent);
@@ -79,14 +81,25 @@ namespace ProjektLavor.Models
         }
         public void AddNewImageField(string path)
         {
+            AddNewImageField(new BitmapImage(new Uri(path)));
+        }
+        public void AddNewImageField(ImageSource source, bool IgnoreWizard = false)
+        {
             if (Document == null || Document.Pages.Count <= 0) return;
+
+            _projectStore.SaveState();
+
             if (ActivePage == null)
             {
-                Document.Pages.Last().Child.Children.Add(GetImageField(path));
+                var newImageField = Document.Pages.Last().Child.Children.Add(GetImageField(source));
+                ((Image)Document.Pages.Last().Child.Children[newImageField]).Tag = Guid.NewGuid().ToString();
+                if (IgnoreWizard) ((Image)Document.Pages.Last().Child.Children[newImageField]).Tag = "ignore_wizard";
             }
             else
             {
-                ActivePage.Children.Add(GetImageField(path));
+                var newImageField = ActivePage.Children.Add(GetImageField(source));
+                ((Image)ActivePage.Children[newImageField]).Tag = Guid.NewGuid().ToString();
+                if (IgnoreWizard) ((Image)ActivePage.Children[newImageField]).Tag = "ignore_wizard";
             }
         }
 
@@ -109,10 +122,10 @@ namespace ProjektLavor.Models
             return textBlock;
         }
 
-        private Image GetImageField(string path)
+        private Image GetImageField(ImageSource source)
         {
             Image image = new Image();
-            image.Source = new BitmapImage(new Uri(path));
+            image.Source = source;
             image.Stretch = Stretch.Fill;
             image.Cursor = Cursors.SizeAll;
 
