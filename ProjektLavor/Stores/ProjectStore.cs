@@ -379,8 +379,14 @@ namespace ProjektLavor.Stores
             removeElementMenuItem.Command = new RemoveElementCommand();
             removeElementMenuItem.CommandParameter = Tuple.Create((FrameworkElement)image, _selectedElementStore, this);
 
+            MenuItem removeFrameMenuItem = new MenuItem();
+            removeFrameMenuItem.Header = "Keret törlése";
+            removeFrameMenuItem.Command = new RemoveFrameCommand();
+            removeFrameMenuItem.CommandParameter = Tuple.Create((FrameworkElement)image, _selectedElementStore, this);
+
             contextMenu.Items.Add(changeImageMenuItem);
             contextMenu.Items.Add(removeElementMenuItem);
+            contextMenu.Items.Add(removeFrameMenuItem);
 
             return contextMenu;
         }

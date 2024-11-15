@@ -7,7 +7,7 @@ using System.Windows.Documents;
 
 namespace ProjektLavor.Commands
 {
-    public class RemoveElementCommand : CommandBase
+    public class RemoveFrameCommand : CommandBase
     {
         public override void Execute(object? parameter)
         {
@@ -17,14 +17,17 @@ namespace ProjektLavor.Commands
 
             if (element?.Parent == null) return;
             if (element.Parent.GetType() != typeof(FixedPage)) return;
-            FixedPage parent = (FixedPage)element.Parent;
 
-            selectedElementStore.Select(null);
+            FixedPage fixedPage = (FixedPage)element.Parent;
 
-            if (parent.Children.Contains(element))
+            foreach (var item in AdornerLayer.GetAdornerLayer(fixedPage)?.GetAdorners(selectedElementStore.SelectedElement) ?? [])
             {
-                projectStore.SaveState();
-                parent.Children.Remove(element);
+                if (item is FrameAdorner)
+                {
+                    projectStore.SaveState();
+                    AdornerLayer.GetAdornerLayer(fixedPage)?.Remove(item);
+                    selectedElementStore.SelectedElement = null;
+                }
             }
         }
     }
