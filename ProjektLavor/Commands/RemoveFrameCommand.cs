@@ -15,17 +15,12 @@ namespace ProjektLavor.Commands
 
             var (element, selectedElementStore, projectStore) = tuple;
 
-            if (element?.Parent == null) return;
-            if (element.Parent.GetType() != typeof(FixedPage)) return;
-
-            FixedPage fixedPage = (FixedPage)element.Parent;
-
-            foreach (var item in AdornerLayer.GetAdornerLayer(element)?.GetAdorners(selectedElementStore.SelectedElement) ?? [])
+            foreach (var item in AdornerLayer.GetAdornerLayer(element)?.GetAdorners(element) ?? [])
             {
                 if (item is FrameAdorner)
                 {
                     projectStore.SaveState();
-                    AdornerLayer.GetAdornerLayer(fixedPage)?.Remove(item);
+                    AdornerLayer.GetAdornerLayer(element)?.Remove(item);
                     selectedElementStore.SelectedElement = null;
                 }
             }

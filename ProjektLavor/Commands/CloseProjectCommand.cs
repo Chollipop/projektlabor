@@ -18,6 +18,7 @@ namespace ProjektLavor.Commands
 
         public override void Execute(object? parameter)
         {
+            _projectStore.ClearAdorners();
             _projectStore.CloseProject();
             _projectStore.CurrentProjectFilePath = null;
             _projectStore.ClearUndoRedoStacks();

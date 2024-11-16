@@ -258,6 +258,8 @@ namespace ProjektLavor.Stores
 
         public void AddAdorners()
         {
+            if (adorners.Count == 0) return;
+
             foreach (var adorner in adorners)
             {
                 foreach (var page in CurrentProject.Document.Pages)
@@ -286,6 +288,11 @@ namespace ProjektLavor.Stores
             }
         }
 
+        public void ClearAdorners()
+        {
+            adorners.Clear();
+        }
+
         private FixedDocument DeserializeDocument(string documentState)
         {
             try
@@ -299,7 +306,7 @@ namespace ProjektLavor.Stores
                     document = (FixedDocument)System.Windows.Markup.XamlReader.Load(reader);
                 }
 
-                 adorners = new List<Tuple<string, Image, BitmapImage>>();
+                 ClearAdorners();
                 // Deserialize FrameAdorner states
                 foreach (var adornerElement in xDocument.Root.Elements("FrameAdornerState"))
                 {
