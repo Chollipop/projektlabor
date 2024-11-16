@@ -16,6 +16,7 @@ namespace ProjektLavor.Commands
             var (element, selectedElementStore, projectStore) = tuple;
 
             if (element?.Parent == null) return;
+            if (element.Parent is AdornerDecorator) element = (FrameworkElement)element.Parent;
             if (element.Parent.GetType() != typeof(FixedPage)) return;
             FixedPage parent = (FixedPage)element.Parent;
 

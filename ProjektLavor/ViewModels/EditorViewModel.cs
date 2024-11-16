@@ -160,15 +160,23 @@ namespace ProjektLavor.ViewModels
                     break;
                 }
             }
-            if (fixedPage != _selectedElementStore.SelectedElement.Parent)
+
+            FrameworkElement element = _selectedElementStore.SelectedElement;
+            FixedPage? parentPage = element.Parent as FixedPage;
+            if (element.Parent is AdornerDecorator)
+            {
+                parentPage = (FixedPage)((AdornerDecorator)element.Parent).Parent;
+                element = (FrameworkElement)element.Parent;
+            }
+
+            if (fixedPage != parentPage)
             {
                 DetachResizeAdorner(_selectedElementStore.SelectedElement);
-                FixedPage oldParent = _selectedElementStore.SelectedElement.Parent as FixedPage;
-                if (oldParent != null)
+                if (parentPage != null)
                 {
-                    oldParent.Children.Remove(_selectedElementStore.SelectedElement);
+                    parentPage.Children.Remove(element);
                 }
-                fixedPage.Children.Add(_selectedElementStore.SelectedElement);
+                fixedPage.Children.Add(element);
                 ReattachResizeAdorner(_selectedElementStore.SelectedElement);
             }
             Point cPos = Mouse.GetPosition(fixedPage);
@@ -200,8 +208,8 @@ namespace ProjektLavor.ViewModels
                 }
             }
 
-            FixedPage.SetLeft(_selectedElementStore.SelectedElement, x);
-            FixedPage.SetTop(_selectedElementStore.SelectedElement, y);
+            FixedPage.SetLeft(element, x);
+            FixedPage.SetTop(element, y);
         }
         #endregion
 

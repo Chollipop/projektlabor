@@ -23,19 +23,25 @@ namespace ProjektLavor.Commands
             _projectStore.SaveState();
 
             // Get the parent container of the selected element
-            var parent = _selectedElement.Parent as UIElement;
+            FrameworkElement? parent = _selectedElement.Parent as FrameworkElement;
+            FrameworkElement element = _selectedElement;
 
             // Ensure that the parent is a container that can hold child elements
             if (parent == null) return;
+            if (parent is AdornerDecorator)
+            {
+                element = parent;
+                parent = (FrameworkElement)parent.Parent;
+            }
 
             // Get the parent container as a Panel (e.g., Canvas, Grid, etc.)
             if (parent is FixedPage parentPage)
             {
                 // Remove the selected element from the parent container
-                parentPage.Children.Remove(_selectedElement);
+                parentPage.Children.Remove(element);
 
                 // Reinsert the selected element at the last position (bring to front)
-                parentPage.Children.Add(_selectedElement);
+                parentPage.Children.Add(element);
             }
         }
     }

@@ -79,7 +79,7 @@ namespace ProjektLavor.Commands
                 }
                 foreach (FrameworkElement element in fixedPage.Children)
                 {
-                    adorners = adornerLayer.GetAdorners(element);
+                    adorners = AdornerLayer.GetAdornerLayer(element).GetAdorners(element);
                     foreach (Adorner adorner in adorners ?? [])
                     {
                         if (!(adorner is FrameAdorner)) continue;
@@ -91,6 +91,8 @@ namespace ProjektLavor.Commands
 
                         double x = FixedPage.GetLeft(element);
                         double y = FixedPage.GetTop(element);
+                        //double x = FixedPage.GetLeft((UIElement)(element is Image ? element.Parent : element));
+                        //double y = FixedPage.GetTop((UIElement)(element is Image ? element.Parent : element));
                         double width = element.RenderSize.Width;
                         double height = element.RenderSize.Height;
                         double frameOverhangX = width * .1;

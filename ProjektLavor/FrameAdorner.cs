@@ -35,8 +35,9 @@ namespace ProjektLavor
         {
             double width = AdornedElement.RenderSize.Width;
             double height = AdornedElement.RenderSize.Height;
+            double percent = .12;
 
-            Image.Arrange(new Rect(-(width*.13), -(height * .13), width + (width * .13 * 2), height + (height * .13 * 2)));
+            Image.Arrange(new Rect(-(width * percent), -(height * percent), width + (width * percent * 2), height + (height * percent * 2)));
             return finalSize;
         }
 

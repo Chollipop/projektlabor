@@ -27,7 +27,7 @@ namespace ProjektLavor.Commands
             {
                 if (page.Child is FixedPage fixedPage)
                 {
-                    var images = fixedPage.Children.OfType<Image>().Where(i => (i.Tag?.ToString() ?? string.Empty) != "ignore_wizard").ToList();
+                    var images = fixedPage.Children.OfType<AdornerDecorator>().Where(d => ((d.Child as Image)?.Tag?.ToString() ?? string.Empty) != "ignore_wizard").Select(d => d.Child as Image).ToList();
                     if (images.Count == 0)
                     {
                         fixedPage.Background = new SolidColorBrush(Colors.White);
