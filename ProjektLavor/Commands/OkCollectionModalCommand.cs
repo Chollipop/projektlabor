@@ -1,6 +1,7 @@
 ﻿using ProjektLavor.Services;
 using ProjektLavor.Stores;
 using ProjektLavor.ViewModels;
+using System.Windows.Controls;
 using System.Windows.Documents;
 
 namespace ProjektLavor.Commands
@@ -30,17 +31,20 @@ namespace ProjektLavor.Commands
             }
             else
             {
-                _projectStore.SaveState();
-                AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(_selectedElementStore.SelectedElement);
-                foreach (var item in adornerLayer?.GetAdorners(_selectedElementStore.SelectedElement) ?? [])
+                if (_selectedElementStore.SelectedElement.GetType() == typeof(Image) && ((Image)_selectedElementStore.SelectedElement).Tag?.ToString() != "ignore_wizard")
                 {
-                    if (item is FrameAdorner)
+                    _projectStore.SaveState();
+                    AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(_selectedElementStore.SelectedElement);
+                    foreach (var item in adornerLayer?.GetAdorners(_selectedElementStore.SelectedElement) ?? [])
                     {
-                        adornerLayer?.Remove(item);
+                        if (item is FrameAdorner)
+                        {
+                            adornerLayer?.Remove(item);
+                        }
                     }
-                }
 
-                adornerLayer?.Add(new FrameAdorner(_selectedElementStore.SelectedElement, _viewModel.SelectedImage.Source.Clone()));
+                    adornerLayer?.Add(new FrameAdorner(_selectedElementStore.SelectedElement, _viewModel.SelectedImage.Source.Clone()));
+                }
             }
 
             //_selectedElementStore.SelectedElement = null;

@@ -29,6 +29,7 @@ namespace ProjektLavor.ViewModels
         public ICommand ExportProjectCommand { get; }
         public ICommand PrintProjectCommand { get; }
         public ICommand DeletePageCommand { get; }
+        public ICommand RotatePageCommand { get; }
 
         public NavigationBarViewModel(IServiceProvider _serviceProvider)
         {
@@ -51,6 +52,7 @@ namespace ProjektLavor.ViewModels
             ExitApplicationCommand = new ExitApplicationCommand();
 
             DeletePageCommand = new DeletePageCommand(selectedElementStore, projectStore);
+            RotatePageCommand = new RotatePageCommand(selectedElementStore, projectStore);
         }
     }
 }

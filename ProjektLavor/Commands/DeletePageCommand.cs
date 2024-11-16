@@ -75,25 +75,22 @@ namespace ProjektLavor.Commands
 
                 for (int i = 0; i < newPageCount; i++)
                 {
-                    if (_projectStore.CurrentProject.Document.Pages[i].Child != pageToDelete)
+                    var newPage = _projectStore.CurrentProject.Document.Pages[i].Child;
+                    var oldPage = newProject.Document.Pages[i].Child;
+                    newPage.Background = oldPage.Background;
+                    newPage.Tag = oldPage.Tag;
+
+                    var newChildren = _projectStore.CurrentProject.Document.Pages[i].Child.Children;
+                    var oldChildren = newProject.Document.Pages[i].Child.Children;
+                    var oldChildrenCopy = new List<UIElement>(oldChildren.Cast<UIElement>());
+
+                    newChildren.Clear();
+                    foreach (var child in oldChildrenCopy)
                     {
-                        var newPage = _projectStore.CurrentProject.Document.Pages[i].Child;
-                        var oldPage = newProject.Document.Pages[i].Child;
-                        newPage.Background = oldPage.Background;
-                        newPage.Tag = oldPage.Tag;
-
-                        var newChildren = _projectStore.CurrentProject.Document.Pages[i].Child.Children;
-                        var oldChildren = newProject.Document.Pages[i].Child.Children;
-                        var oldChildrenCopy = new List<UIElement>(oldChildren.Cast<UIElement>());
-
-                        newChildren.Clear();
-                        foreach (var child in oldChildrenCopy)
-                        {
-                            oldChildren.Remove(child);
-                            newChildren.Add(child);
-                        }
-                        oldChildrenCopy.Clear();
+                        oldChildren.Remove(child);
+                        newChildren.Add(child);
                     }
+                    oldChildrenCopy.Clear();
                 }
 
                 _projectStore.ClearUndoRedoStacks();

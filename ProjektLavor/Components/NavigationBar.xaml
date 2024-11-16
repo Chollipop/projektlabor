@@ -79,6 +79,11 @@
                     <Image />
                 </MenuItem.Icon>
             </MenuItem>
+            <MenuItem Header="Kijelölt oldal elforgatása" Command="{Binding RotatePageCommand}">
+                <MenuItem.Icon>
+                    <Image />
+                </MenuItem.Icon>
+            </MenuItem>
         </MenuItem>
         <MenuItem Grid.Column="2" Command="{Binding SaveProjectCommand}">
             <MenuItem.Icon>

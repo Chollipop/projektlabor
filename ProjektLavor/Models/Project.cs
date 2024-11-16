@@ -25,19 +25,19 @@ namespace ProjektLavor.Models
         public FixedPage ActivePage { get; private set; }
 
 
-        public Project(SelectedElementStore selectedElementStore, ProjectStore projectStore)
+        public Project(SelectedElementStore selectedElementStore, ProjectStore projectStore, bool startWithRotatedPage = false)
         {
             _selectedElementStore = selectedElementStore;
             _projectStore = projectStore;
 
-            CreateEmptyDocument();
+            CreateEmptyDocument(startWithRotatedPage);
         }
 
-        private void CreateEmptyDocument()
+        private void CreateEmptyDocument(bool startWithRotatedPage = false)
         {
             Document = new FixedDocument();
             Document.Cursor = Cursors.Arrow;
-            AddBlankPage();
+            AddBlankPage(null, startWithRotatedPage);
         }
         public void AddTestElements()
         {
@@ -45,7 +45,7 @@ namespace ProjektLavor.Models
             AddNewImageField("Pack://application:,,,/Assets/coconut.jpg");
         }
 
-        public PageContent AddBlankPage(PageContent newPage = null)
+        public PageContent AddBlankPage(PageContent newPage = null, bool rotate = false)
         {
             if (newPage != null)
             {
@@ -55,8 +55,16 @@ namespace ProjektLavor.Models
             PageContent pageContent = new PageContent();
             FixedPage fixedPage = new FixedPage();
 
-            fixedPage.Width = ISOA4.Width;
-            fixedPage.Height = ISOA4.Height;
+            if (rotate)
+            {
+                fixedPage.Width = ISOA4.Height;
+                fixedPage.Height = ISOA4.Width;
+            }
+            else
+            {
+                fixedPage.Width = ISOA4.Width;
+                fixedPage.Height = ISOA4.Height;
+            }
 
             fixedPage.Tag = Guid.NewGuid().ToString();
 

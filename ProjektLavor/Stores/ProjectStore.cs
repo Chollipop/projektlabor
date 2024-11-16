@@ -79,9 +79,9 @@ namespace ProjektLavor.Stores
         {
             CurrentProject = null;
         }
-        public void NewPage(PageContent newPage = null)
+        public void NewPage(PageContent newPage = null, bool rotate = false)
         {
-            PageContent _newPage = _currentProject.AddBlankPage(newPage);
+            PageContent _newPage = _currentProject.AddBlankPage(newPage, rotate);
             NewPageAdded?.Invoke(_newPage);
         }
 
@@ -113,12 +113,42 @@ namespace ProjektLavor.Stores
                 string documentState = System.IO.File.ReadAllText(filePath);
                 FixedDocument deserializedDocument = DeserializeDocument(documentState);
 
+                var alreadyRotatedPages = deserializedDocument.Pages
+                    .Where(p => p.Child.Width > p.Child.Height);
+                var alreadyRotatedPageIndexes = new List<int>();
+
+                for (int i = 0; i < deserializedDocument.Pages.Count; i++)
+                {
+                    foreach (var page in alreadyRotatedPages)
+                    {
+                        if (deserializedDocument.Pages[i].Child == page.Child)
+                        {
+                            alreadyRotatedPageIndexes.Add(i);
+                        }
+                    }
+                }
+
                 if (CurrentProject == null)
                 {
-                    CurrentProject = new Project(_selectedElementStore, this);
+                    if (alreadyRotatedPageIndexes.Contains(0))
+                    {
+                        CurrentProject = new Project(_selectedElementStore, this, true);
+                    }
+                    else
+                    {
+                        CurrentProject = new Project(_selectedElementStore, this);
+                    }
+
                     for (int i = 1; i < deserializedDocument.Pages.Count; i++)
                     {
-                        this.NewPage();
+                        if (alreadyRotatedPageIndexes.Contains(i))
+                        {
+                            NewPage(null, true);
+                        }
+                        else
+                        {
+                            NewPage();
+                        }
                     }
                 }
 
