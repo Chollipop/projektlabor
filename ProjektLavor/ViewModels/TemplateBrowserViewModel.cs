@@ -64,6 +64,10 @@ namespace ProjektLavor.ViewModels
             newPageChildren.Clear();
             foreach (var child in childrenToAddCopy)
             {
+                if (child is AdornerDecorator imageParent)
+                {
+                    ((Image)imageParent.Child).Tag = Guid.NewGuid();
+                }
                 childrenToAdd.Remove(child);
                 newPageChildren.Add(child);
             }
