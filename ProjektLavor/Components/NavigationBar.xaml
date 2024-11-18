@@ -84,6 +84,11 @@
                     <Image />
                 </MenuItem.Icon>
             </MenuItem>
+            <MenuItem Header="Kijelölt oldal mentése sablonként" Command="{Binding SavePageAsTemplateCommand}">
+                <MenuItem.Icon>
+                    <Image />
+                </MenuItem.Icon>
+            </MenuItem>
         </MenuItem>
         <MenuItem Grid.Column="2" Command="{Binding SaveProjectCommand}">
             <MenuItem.Icon>

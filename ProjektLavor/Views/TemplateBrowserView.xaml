@@ -27,7 +27,7 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Image Source="{Binding Key.Source}" Width="375" Height="450" Margin="5"/>
+                    <Image Source="{Binding Key.Source}" Width="335" Height="425" Margin="5"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

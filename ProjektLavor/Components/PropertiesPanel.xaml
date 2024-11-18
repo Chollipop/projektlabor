@@ -11,12 +11,29 @@
             <Style TargetType="TextBox">
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>
+
+            <Style TargetType="Button" x:Key="RoundedButtonStyle">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="{TemplateBinding BorderThickness}" 
+                        CornerRadius="5"
+                        Padding="5">
+                                <ContentPresenter HorizontalAlignment="Center" 
+                                        VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </StackPanel.Resources>
 
         <!--#region Rotate -->
         <DockPanel Margin="5 5 5 0">
-            <Label DockPanel.Dock="Left" Content="Forgatás:"/>
-            <Label DockPanel.Dock="Right" Content="fok"/>
+            <Label DockPanel.Dock="Left" Content="Forgatás:" Width="75"/>
+            <Label DockPanel.Dock="Right" Content="fok" Width="30"/>
             <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Text="{Binding RotationDegree,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
         </DockPanel>
         <!--#endregion-->
@@ -32,10 +49,10 @@
             </Grid.RowDefinitions>
 
             <Label Grid.Row="0" Grid.ColumnSpan="2" Content="Tükrözés" HorizontalContentAlignment="Center"/>
-            <Button Grid.Row="1" Grid.Column="0" Margin="5" BorderThickness="0" MaxWidth="100" Command="{Binding VerticalMirrorCommand}">
+            <Button Style="{StaticResource RoundedButtonStyle}" Grid.Row="1" Grid.Column="0" Margin="5" BorderThickness="1" MaxWidth="100" Command="{Binding VerticalMirrorCommand}">
                 <Image Source="/Assets/Icons/flip.png" Stretch="UniformToFill"/>
             </Button>
-            <Button Grid.Row="1" Grid.Column="1" Margin="5" BorderThickness="0" MaxWidth="100" Command="{Binding HorizontalMirrorCommand}">
+            <Button Style="{StaticResource RoundedButtonStyle}" Grid.Row="1" Grid.Column="1" Margin="5" BorderThickness="1" MaxWidth="100" Command="{Binding HorizontalMirrorCommand}">
                 <Image Source="/Assets/Icons/flip.png" Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5">
                     <Image.RenderTransform>
                         <TransformGroup>
@@ -44,6 +61,27 @@
                     </Image.RenderTransform>
                 </Image>
             </Button>
+        </Grid>
+        <!--#endregion-->
+        <!--#region Coordinates -->
+        <Grid Margin="5 10 5 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" Content="X:" Width="75"/>
+            <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Grid.Row="0" Grid.Column="1" Text="{Binding ElementX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Grid.Row="0" Grid.Column="2" Content="px" Width="30" />
+
+            <Label Grid.Row="1" Grid.Column="0" Content="Y:" Width="75"/>
+            <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Grid.Row="1" Grid.Column="1" Text="{Binding ElementY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Grid.Row="1" Grid.Column="2" Content="px" Width="30" />
         </Grid>
         <!--#endregion-->
         <!--#region Resize -->
@@ -71,36 +109,15 @@
             <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Grid.Row="2" Grid.Column="1" Text="{Binding ResizeHeightPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
             <Label Grid.Row="2" Grid.Column="2" Content="%"/>-->
 
-            <Label Margin="0 5 0 0" Grid.Row="3" Grid.Column="0" Content="Szélesség:"/>
+            <Label Margin="0 5 0 0" Grid.Row="3" Grid.Column="0" Content="Szélesség:" Width="75"/>
             <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Margin="0 5 0 0" Grid.Row="3" Grid.Column="1" Text="{Binding ResizeWidth,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-            <Label Margin="0 5 0 0" Grid.Row="3" Grid.Column="2" Content="px"/>
+            <Label Margin="0 5 0 0" Grid.Row="3" Grid.Column="2" Content="px" Width="30" />
 
-            <Label Grid.Row="4" Grid.Column="0" Content="Magasság:"/>
+            <Label Grid.Row="4" Grid.Column="0" Content="Magasság:" Width="75"/>
             <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Grid.Row="4" Grid.Column="1" Text="{Binding ResizeHeight,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-            <Label Grid.Row="4" Grid.Column="2" Content="px"/>
+            <Label Grid.Row="4" Grid.Column="2" Content="px" Width="30" />
 
             <CheckBox Margin="0 5 0 0" Grid.Row="5" Grid.ColumnSpan="3" HorizontalAlignment="Center" Content="Méretarány megtartása" IsChecked="{Binding KeepAspectRatio}"/>
-        </Grid>
-        <!--#endregion-->
-        <!--#region Coordinates -->
-        <Grid Margin="5 10 5 0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-            </Grid.RowDefinitions>
-
-            <Label Grid.Row="0" Grid.Column="0" Content="X:"/>
-            <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Grid.Row="0" Grid.Column="1" Text="{Binding ElementX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <Label Grid.Row="0" Grid.Column="2" Content="px"/>
-
-            <Label Grid.Row="1" Grid.Column="0" Content="Y:"/>
-            <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Grid.Row="1" Grid.Column="1" Text="{Binding ElementY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <Label Grid.Row="1" Grid.Column="2" Content="px"/>
         </Grid>
         <!--#endregion-->
         <!--#region Font -->
@@ -121,12 +138,23 @@
                 </Style>
             </Grid.Style>
 
-            <ComboBox Grid.Row="0" Grid.ColumnSpan="4" ItemsSource="{Binding AvailableFonts}" SelectedItem="{Binding SelectedFont}"/>
-
-            <DockPanel Grid.Row="1" Margin="0 5 0 2">
-                <Label DockPanel.Dock="Left" Content="Betűméret:"/>
-                <TextBox PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Text="{Binding FontSize,UpdateSourceTrigger=PropertyChanged}"/>
-            </DockPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+                
+                <Label Grid.Row="0" Grid.Column="0" Content="Betűméret:" Width="75"/>
+                <TextBox Grid.Row="0" Grid.Column="1" PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBoxPasting" Text="{Binding FontSize,UpdateSourceTrigger=PropertyChanged}"/>
+                <Label Grid.Row="0" Grid.Column="2" Content="px" Width="30" />
+                
+            </Grid>
+            
+            <ComboBox Grid.Row="1" Grid.ColumnSpan="4" ItemsSource="{Binding AvailableFonts}" SelectedItem="{Binding SelectedFont}"/>
 
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
@@ -135,13 +163,13 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Margin="5" Padding="2" MaxWidth="30" BorderThickness="1" BorderBrush="Black" Background="Transparent" Command="{Binding ToggleBoldCommand}">
+                <Button Grid.Column="0" Margin="5" Padding="2" MaxWidth="30" BorderThickness="1" BorderBrush="Black" Background="Transparent" Command="{Binding ToggleBoldCommand}" Style="{StaticResource RoundedButtonStyle}">
                     <Image Source="/Assets/Icons/bold.png" Stretch="UniformToFill"/>
                 </Button>
-                <Button Grid.Column="1" Margin="5" Padding="2" MaxWidth="30" BorderThickness="1" BorderBrush="Black" Background="Transparent" Command="{Binding ToggleItalicCommand}">
+                <Button Grid.Column="1" Margin="5" Padding="2" MaxWidth="30" BorderThickness="1" BorderBrush="Black" Background="Transparent" Command="{Binding ToggleItalicCommand}" Style="{StaticResource RoundedButtonStyle}">
                     <Image Source="/Assets/Icons/italic.png" Stretch="UniformToFill"/>
                 </Button>
-                <Button Grid.Column="2" Margin="5" Padding="2" MaxWidth="30" BorderThickness="1" BorderBrush="Black" Background="Transparent" Command="{Binding ToggleUnderlineCommand}">
+                <Button Grid.Column="2" Margin="5" Padding="2" MaxWidth="30" BorderThickness="1" BorderBrush="Black" Background="Transparent" Command="{Binding ToggleUnderlineCommand}" Style="{StaticResource RoundedButtonStyle}">
                     <Image Source="/Assets/Icons/underline.png" Stretch="UniformToFill"/>
                 </Button>
 
@@ -155,8 +183,8 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" HorizontalAlignment="Center" Margin="5" Padding="5" Command="{Binding MoveElementForwardCommand}">Előreküldés</Button>
-            <Button Grid.Column="1" HorizontalAlignment="Center" Margin="5" Padding="5" Command="{Binding MoveElementBackwardCommand}">Hátraküldés</Button>
+            <Button Grid.Column="0" HorizontalAlignment="Center" Margin="5" Padding="5" Command="{Binding MoveElementForwardCommand}" Style="{StaticResource RoundedButtonStyle}">Előreküldés</Button>
+            <Button Grid.Column="1" HorizontalAlignment="Center" Margin="5" Padding="5" Command="{Binding MoveElementBackwardCommand}" Style="{StaticResource RoundedButtonStyle}">Hátraküldés</Button>
         </Grid>
         <!--#endregion-->
     </StackPanel>

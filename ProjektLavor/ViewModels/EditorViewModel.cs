@@ -15,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace ProjektLavor.ViewModels
 {
@@ -25,6 +26,34 @@ namespace ProjektLavor.ViewModels
         private PropertiesPanelViewModel _propertiesPanelViewModel;
         private ModalNavigationStore _modalNavigationStore;
         private bool _hasMoved;
+
+        private FixedPage _activePage;
+
+        private void OnActivePageChanged()
+        {
+            if (_activePage != null)
+            {
+                _activePage.Effect = null;
+            }
+
+            _activePage = _projectStore.CurrentProject.ActivePage;
+            if (_activePage != null)
+            {
+                _activePage.Effect = new System.Windows.Media.Effects.DropShadowEffect()
+                {
+                    Color = Colors.Red,
+                    Direction = 0,
+                    ShadowDepth = 0,
+                    Opacity = 1,
+                    BlurRadius = 100
+                };
+                _activePage.Effect.BeginAnimation(System.Windows.Media.Effects.DropShadowEffect.BlurRadiusProperty, new System.Windows.Media.Animation.DoubleAnimation(0, 100, new Duration(TimeSpan.FromSeconds(0.75)))
+                {
+                    AutoReverse = true,
+                    RepeatBehavior = RepeatBehavior.Forever
+                });
+            }
+        }
 
         public PropertiesPanelViewModel PropertiesPanelViewModel
         {
@@ -61,6 +90,10 @@ namespace ProjektLavor.ViewModels
 
             ApplyPropertiesCommand = new ApplyPropertiesCommand(_selectedElementStore);
             ScrollChangedCommand = new ScrollChangedCommand(_projectStore);
+            if (_projectStore.CurrentProject != null)
+            {
+                _projectStore.CurrentProject.ActivePageChanged += OnActivePageChanged;
+            }
         }
 
         private void _selectedElementStore_PreviewSelectedElementChanged(object sender, PreviewSelectedElementChangedEventArgs e)
@@ -245,6 +278,11 @@ namespace ProjektLavor.ViewModels
                 pageContent.Child.MouseDown += FixedPage_MouseDown;
                 pageContent.Child.MouseUp += FixedPage_MouseUp;
                 pageContent.Child.MouseMove += FixedPage_MouseMove;
+            }
+
+            if (_projectStore.CurrentProject != null)
+            {
+                _projectStore.CurrentProject.ActivePageChanged += OnActivePageChanged;
             }
 
             Task.Run(() =>

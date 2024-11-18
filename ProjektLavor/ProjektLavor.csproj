@@ -43,6 +43,7 @@
     <None Remove="Assets\Icons\underline.png" />
     <None Remove="Assets\Icons\undo.png" />
     <None Remove="Assets\Templates\placeholder.png" />
+    <None Remove="Assets\Templates\plus-symbol-button.png" />
     <None Remove="Assets\Templates\template1.png" />
     <None Remove="Assets\Templates\template2.png" />
     <None Remove="Assets\Templates\template3.png" />
@@ -142,6 +143,7 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Templates\placeholder.png" />
+    <Resource Include="Assets\Templates\plus-symbol-button.png" />
     <Resource Include="Assets\Templates\template1.png" />
     <Resource Include="Assets\Templates\template2.png" />
     <Resource Include="Assets\Templates\template3.png" />

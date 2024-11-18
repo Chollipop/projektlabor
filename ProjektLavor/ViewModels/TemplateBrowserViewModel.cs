@@ -1,9 +1,11 @@
-﻿using ProjektLavor.Commands;
+﻿using Microsoft.Win32;
+using ProjektLavor.Commands;
 using ProjektLavor.Services;
 using ProjektLavor.Stores;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,9 +13,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Xml;
 using Xceed.Wpf.AvalonDock.Controls;
 
 namespace ProjektLavor.ViewModels
@@ -52,28 +56,80 @@ namespace ProjektLavor.ViewModels
             OnPropertyChanged(nameof(Items));
         }
 
+        private FixedPage DeserializeFixedPage(string xaml)
+        {
+            using (var stringReader = new StringReader(xaml))
+            {
+                using (var xmlReader = XmlReader.Create(stringReader))
+                {
+                    var fixedPage = (FixedPage)XamlReader.Load(xmlReader);
+                    foreach (var child in fixedPage.Children)
+                    {
+                        if (child is AdornerDecorator decorator)
+                        {
+                            var image = (Image)decorator.Child;
+                            image.Source = new BitmapImage(new Uri("Pack://application:,,,/Assets/Templates/placeholder.png"));
+                            image.ContextMenu = _projectStore.CreateImageContextMenu(image);
+                        }
+                    }
+                    return fixedPage;
+                }
+            }
+        }
+
         public void AddPage()
         {
-            _projectStore.NewPage();
+            UIElementCollection childrenToAdd = null;
+            FixedPage loadedPage = new FixedPage() { Background = Brushes.White, Tag = Guid.NewGuid() };
 
-            var newPage = _projectStore.CurrentProject.Document.Pages[_projectStore.CurrentProject.Document.Pages.Count - 1];
-            var newPageChildren = newPage.Child.Children;
-            var childrenToAdd = SelectedItem.Value.Child.Children;
-            var childrenToAddCopy = new List<UIElement>(childrenToAdd.Cast<UIElement>());
-
-            newPageChildren.Clear();
-            foreach (var child in childrenToAddCopy)
+            if (SelectedItem.Value.Child.Tag == "custom_template")
             {
-                if (child is AdornerDecorator imageParent)
+                OpenFileDialog openFileDialog = new OpenFileDialog
                 {
-                    ((Image)imageParent.Child).Tag = Guid.NewGuid();
-                }
-                childrenToAdd.Remove(child);
-                newPageChildren.Add(child);
-            }
-            childrenToAddCopy.Clear();
+                    Filter = "Template files (*.template)|*.template",
+                    DefaultExt = ".template",
+                    AddExtension = true
+                };
 
-            _projectStore.ClearUndoRedoStacks();
+                bool? result = openFileDialog.ShowDialog();
+                if (result == true)
+                {
+                    string filePath = openFileDialog.FileName;
+                    string serializedPage = File.ReadAllText(filePath);
+                    loadedPage = DeserializeFixedPage(serializedPage);
+                    childrenToAdd = loadedPage.Children;
+                }
+            }
+            else
+            {
+                childrenToAdd = SelectedItem.Value.Child.Children;
+            }
+
+            if (childrenToAdd != null)
+            {
+                _projectStore.NewPage();
+
+                var newPage = _projectStore.CurrentProject.Document.Pages[_projectStore.CurrentProject.Document.Pages.Count - 1];
+                var newPageChildren = newPage.Child.Children;
+                var childrenToAddCopy = new List<UIElement>(childrenToAdd.Cast<UIElement>());
+
+                newPage.Child.Background = loadedPage.Background;
+                newPage.Child.Tag = loadedPage.Tag;
+
+                newPageChildren.Clear();
+                foreach (var child in childrenToAddCopy)
+                {
+                    if (child is AdornerDecorator imageParent)
+                    {
+                        ((Image)imageParent.Child).Tag = Guid.NewGuid();
+                    }
+                    childrenToAdd.Remove(child);
+                    newPageChildren.Add(child);
+                }
+                childrenToAddCopy.Clear();
+
+                _projectStore.ClearUndoRedoStacks();
+            }
 
             _navigationService.Navigate();
         }

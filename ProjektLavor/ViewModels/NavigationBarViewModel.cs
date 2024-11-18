@@ -30,6 +30,7 @@ namespace ProjektLavor.ViewModels
         public ICommand PrintProjectCommand { get; }
         public ICommand DeletePageCommand { get; }
         public ICommand RotatePageCommand { get; }
+        public ICommand SavePageAsTemplateCommand { get; }
 
         public NavigationBarViewModel(IServiceProvider _serviceProvider)
         {
@@ -53,6 +54,7 @@ namespace ProjektLavor.ViewModels
 
             DeletePageCommand = new DeletePageCommand(selectedElementStore, projectStore);
             RotatePageCommand = new RotatePageCommand(selectedElementStore, projectStore);
+            SavePageAsTemplateCommand = new SavePageAsTemplateCommand(projectStore);
         }
     }
 }

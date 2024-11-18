@@ -162,11 +162,21 @@ namespace ProjektLavor.Models
         public void SetActivePage(FixedPage page)
         {
             ActivePage = page;
+            OnActivePageChanged();
+        }
+
+        public event Action ActivePageChanged;
+
+        private void OnActivePageChanged()
+        {
+            ActivePageChanged?.Invoke();
         }
 
         public void Dispose()
         {
             _selectedElementStore.Select(null);
+            ActivePage = null;
+            OnActivePageChanged();
         }
     }
 }

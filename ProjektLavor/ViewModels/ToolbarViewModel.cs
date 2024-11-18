@@ -21,6 +21,8 @@ using System.Xml;
 using System.Windows.Markup;
 using System.Windows;
 using System.Xml.Linq;
+using System.Runtime.CompilerServices;
+using System.ComponentModel;
 
 namespace ProjektLavor.ViewModels
 {
@@ -30,7 +32,6 @@ namespace ProjektLavor.ViewModels
         private SelectedElementStore _selectedElementStore;
 
         public ICommand ChangeColorCommand { get; set; }
-
         public ICommand RunWizardCommand { get; set; }
         public ICommand NewImageElementCommand { get; set; }
         public ICommand OpenNewFrameModalCommand { get; set; }
@@ -112,7 +113,8 @@ namespace ProjektLavor.ViewModels
                     new KeyValuePair<Image, PageContent>(new Image() { Source = new BitmapImage(new Uri("Pack://application:,,,/Assets/Templates/template1.png")) }, new PageContent() { Child = DeserializeFixedPage(template1Xml) }),
                     new KeyValuePair<Image, PageContent>(new Image() { Source = new BitmapImage(new Uri("Pack://application:,,,/Assets/Templates/template2.png")) }, new PageContent() { Child = DeserializeFixedPage(template2Xml) }),
                     new KeyValuePair<Image, PageContent>(new Image() { Source = new BitmapImage(new Uri("Pack://application:,,,/Assets/Templates/template3.png")) }, new PageContent() { Child = DeserializeFixedPage(template3Xml) }),
-                    new KeyValuePair<Image, PageContent>(new Image() { Source = new BitmapImage(new Uri("Pack://application:,,,/Assets/Templates/template4.png")) }, new PageContent() { Child = DeserializeFixedPage(template4Xml) })
+                    new KeyValuePair<Image, PageContent>(new Image() { Source = new BitmapImage(new Uri("Pack://application:,,,/Assets/Templates/template4.png")) }, new PageContent() { Child = DeserializeFixedPage(template4Xml) }),
+                    new KeyValuePair<Image, PageContent>(new Image() { Source = new BitmapImage(new Uri("Pack://application:,,,/Assets/Templates/plus-symbol-button.png")) }, new PageContent() { Child = new FixedPage() { Tag = "custom_template" } })
                 })));
 
             //OpenNewTextElementModalCommand = new NavigateCommand(newTextElementNavigationService);
