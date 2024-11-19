@@ -45,9 +45,9 @@ namespace ProjektLavor.ViewModels
                     Direction = 0,
                     ShadowDepth = 0,
                     Opacity = 1,
-                    BlurRadius = 100
+                    BlurRadius = 100,
                 };
-                _activePage.Effect.BeginAnimation(System.Windows.Media.Effects.DropShadowEffect.BlurRadiusProperty, new System.Windows.Media.Animation.DoubleAnimation(0, 100, new Duration(TimeSpan.FromSeconds(0.75)))
+                _activePage.Effect.BeginAnimation(System.Windows.Media.Effects.DropShadowEffect.OpacityProperty, new System.Windows.Media.Animation.DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.75)))
                 {
                     AutoReverse = true,
                     RepeatBehavior = RepeatBehavior.Forever

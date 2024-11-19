@@ -2,12 +2,16 @@
 using ProjektLavor.Stores;
 using System;
 using System.IO;
+using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Markup;
+using System.Xaml;
 using System.Xml;
+using System.Xml.Linq;
+using static ProjektLavor.Stores.ProjectStore;
 
 namespace ProjektLavor.Commands
 {
@@ -74,12 +78,63 @@ namespace ProjektLavor.Commands
         public string SerializeFixedPage(FixedPage fixedPage)
         {
             RemoveContextMenu(fixedPage);
-            using (var stringWriter = new StringWriter())
+
+            XDocument xDocument = new XDocument(new XElement("Document"));
+
+            using (XmlWriter xmlWriter = xDocument.Root.CreateWriter())
             {
-                using (var xmlWriter = XmlWriter.Create(stringWriter))
+                System.Windows.Markup.XamlWriter.Save(fixedPage, xmlWriter);
+            }
+
+            foreach (FrameworkElement e in fixedPage.Children)
+            {
+                FrameworkElement element = e;
+                if (element is AdornerDecorator) element = (FrameworkElement)((AdornerDecorator)element).Child;
+
+                var adornerLayer = AdornerLayer.GetAdornerLayer(element);
+                if (adornerLayer != null)
                 {
-                    XamlWriter.Save(fixedPage, xmlWriter);
-                    return stringWriter.ToString();
+                    var adorners = adornerLayer.GetAdorners(element);
+                    if (adorners != null)
+                    {
+                        foreach (var adorner in adorners)
+                        {
+                            if (adorner is FrameAdorner frameAdorner)
+                            {
+                                var frameAdornerState = new FrameAdornerState
+                                {
+                                    AdornedElement = ((Image)element).Tag?.ToString() ?? string.Empty,
+                                    SourceUri = frameAdorner.ImageSource.ToString()
+                                };
+
+                                XElement adornerElement = new XElement("FrameAdornerState",
+                                    new XElement("AdornedElement", frameAdornerState.AdornedElement),
+                                    new XElement("SourceUri", frameAdornerState.SourceUri)
+                                );
+
+                                xDocument.Root.Add(adornerElement);
+                            }
+                        }
+                    }
+                }
+            }
+
+            RecreateContextMenu(fixedPage);
+            return xDocument.ToString();
+        }
+
+        private void RecreateContextMenu(FixedPage fixedPage)
+        {
+            foreach (var element in fixedPage.Children)
+            {
+                if (element is TextBlock textBlock)
+                {
+                    textBlock.ContextMenu = _projectStore.CreateTextBlockContextMenu(textBlock);
+                }
+                if (element is AdornerDecorator decorator)
+                {
+                    Image image = (Image)decorator.Child;
+                    image.ContextMenu = _projectStore.CreateImageContextMenu(image);
                 }
             }
         }

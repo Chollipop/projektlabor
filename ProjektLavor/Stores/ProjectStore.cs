@@ -113,6 +113,8 @@ namespace ProjektLavor.Stores
                 string documentState = System.IO.File.ReadAllText(filePath);
                 FixedDocument deserializedDocument = DeserializeDocument(documentState);
 
+                if(deserializedDocument == null) return;
+
                 var alreadyRotatedPages = deserializedDocument.Pages
                     .Where(p => p.Child.Width > p.Child.Height);
                 var alreadyRotatedPageIndexes = new List<int>();
@@ -284,7 +286,7 @@ namespace ProjektLavor.Stores
             }
         }
 
-        private List<Tuple<string, Image, BitmapImage>> adorners = new List<Tuple<string, Image, BitmapImage>>();
+        public List<Tuple<string, Image, BitmapImage>> adorners = new List<Tuple<string, Image, BitmapImage>>();
 
         public void AddAdorners()
         {
@@ -336,7 +338,7 @@ namespace ProjektLavor.Stores
                     document = (FixedDocument)System.Windows.Markup.XamlReader.Load(reader);
                 }
 
-                 ClearAdorners();
+                ClearAdorners();
                 // Deserialize FrameAdorner states
                 foreach (var adornerElement in xDocument.Root.Elements("FrameAdornerState"))
                 {
@@ -395,7 +397,7 @@ namespace ProjektLavor.Stores
             }
         }
 
-        private ContextMenu CreateTextBlockContextMenu(TextBlock textBlock)
+        public ContextMenu CreateTextBlockContextMenu(TextBlock textBlock)
         {
             ContextMenu contextMenu = new ContextMenu();
 
@@ -449,6 +451,8 @@ namespace ProjektLavor.Stores
                     string previousState = _undoStack.Pop();
                     FixedDocument deserializedDocument = DeserializeDocument(previousState);
 
+                    if (deserializedDocument == null) return;
+
                     for (int i = 0; i < deserializedDocument.Pages.Count; i++)
                     {
                         var currentPage = CurrentProject.Document.Pages[i].Child;
@@ -490,6 +494,8 @@ namespace ProjektLavor.Stores
 
                     string nextState = _redoStack.Pop();
                     FixedDocument deserializedDocument = DeserializeDocument(nextState);
+
+                    if (deserializedDocument == null) return;
 
                     for (int i = 0; i < deserializedDocument.Pages.Count; i++)
                     {

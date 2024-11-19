@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,7 +19,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Xml;
+using System.Xml.Linq;
 using Xceed.Wpf.AvalonDock.Controls;
+using static ProjektLavor.Stores.ProjectStore;
 
 namespace ProjektLavor.ViewModels
 {
@@ -58,22 +61,52 @@ namespace ProjektLavor.ViewModels
 
         private FixedPage DeserializeFixedPage(string xaml)
         {
-            using (var stringReader = new StringReader(xaml))
+            try
             {
-                using (var xmlReader = XmlReader.Create(stringReader))
+                XDocument xDocument = XDocument.Parse(xaml);
+                XElement fixedPageElement = (XElement)xDocument.Root.FirstNode;
+                FixedPage fixedPage;
+
+                using (XmlReader reader = fixedPageElement.CreateReader())
                 {
-                    var fixedPage = (FixedPage)XamlReader.Load(xmlReader);
-                    foreach (var child in fixedPage.Children)
+                    fixedPage = (FixedPage)System.Windows.Markup.XamlReader.Load(reader);
+                }
+
+                foreach (var child in fixedPage.Children)
+                {
+                    if (child is AdornerDecorator decorator)
                     {
-                        if (child is AdornerDecorator decorator)
+                        var image = (Image)decorator.Child;
+                        image.Source = new BitmapImage(new Uri("Pack://application:,,,/Assets/Templates/placeholder.png"));
+                        image.ContextMenu = _projectStore.CreateImageContextMenu(image);
+                    }
+                }
+
+                foreach (var adornerElement in xDocument.Root.Elements("FrameAdornerState"))
+                {
+                    var frameAdornerState = new FrameAdornerState
+                    {
+                        AdornedElement = adornerElement.Element("AdornedElement").Value,
+                        SourceUri = adornerElement.Element("SourceUri").Value
+                    };
+
+                    foreach (FrameworkElement e in fixedPage.Children)
+                    {
+                        FrameworkElement element = e;
+                        if (element is AdornerDecorator) element = (FrameworkElement)((AdornerDecorator)element).Child;
+
+                        if (element is Image image && image.Tag.ToString() == frameAdornerState.AdornedElement)
                         {
-                            var image = (Image)decorator.Child;
-                            image.Source = new BitmapImage(new Uri("Pack://application:,,,/Assets/Templates/placeholder.png"));
-                            image.ContextMenu = _projectStore.CreateImageContextMenu(image);
+                            _projectStore.adorners.Add(new Tuple<string, Image, BitmapImage>(fixedPage.Tag.ToString(), image, new BitmapImage(new Uri(frameAdornerState.SourceUri))));
                         }
                     }
-                    return fixedPage;
                 }
+
+                return fixedPage;
+            }
+            catch (Exception e)
+            {
+                return null;
             }
         }
 
@@ -97,6 +130,9 @@ namespace ProjektLavor.ViewModels
                     string filePath = openFileDialog.FileName;
                     string serializedPage = File.ReadAllText(filePath);
                     loadedPage = DeserializeFixedPage(serializedPage);
+
+                    if (loadedPage == null) return;
+
                     childrenToAdd = loadedPage.Children;
                 }
             }
