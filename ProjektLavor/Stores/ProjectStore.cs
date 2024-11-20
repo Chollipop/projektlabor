@@ -15,6 +15,7 @@ using System.IO;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 using System.Windows.Media;
+using System.Diagnostics;
 
 namespace ProjektLavor.Stores
 {
@@ -371,6 +372,7 @@ namespace ProjektLavor.Stores
             }
             catch (Exception e)
             {
+                Debug.Write(e.Message);
                 return null;
             }
         }
@@ -478,7 +480,9 @@ namespace ProjektLavor.Stores
                 }
             }
             catch (Exception e)
-            { }
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
         public void Redo()
@@ -522,13 +526,141 @@ namespace ProjektLavor.Stores
                 }
             }
             catch (Exception e)
-            { }
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
         public void ClearUndoRedoStacks()
         {
             _undoStack.Clear();
             _redoStack.Clear();
+        }
+
+        public void ApplyLetterboxImage(Image image, BitmapImage newImage)
+        {
+            double containerWidth = image.ActualWidth;
+            double containerHeight = image.ActualHeight;
+            double containerAspectRatio = containerWidth / containerHeight;
+
+            double imageAspectRatio = newImage.Width / newImage.Height;
+
+            // Get the average color of the new image
+            Color avgColor = GetAvgRgb(newImage);
+
+            DrawingVisual drawingVisual = new DrawingVisual();
+            using (DrawingContext drawingContext = drawingVisual.RenderOpen())
+            {
+                if (imageAspectRatio > containerAspectRatio)
+                {
+                    double scaledHeight = containerWidth / imageAspectRatio;
+                    double yOffset = (containerHeight - scaledHeight) / 2;
+
+                    drawingContext.DrawRectangle(new SolidColorBrush(avgColor), null, new Rect(0, 0, containerWidth, yOffset));
+                    drawingContext.DrawImage(newImage, new Rect(0, yOffset, containerWidth, scaledHeight));
+                    drawingContext.DrawRectangle(new SolidColorBrush(avgColor), null, new Rect(0, yOffset + scaledHeight, containerWidth, yOffset));
+                }
+                else
+                {
+                    double scaledWidth = containerHeight * imageAspectRatio;
+                    double xOffset = (containerWidth - scaledWidth) / 2;
+
+                    drawingContext.DrawRectangle(new SolidColorBrush(avgColor), null, new Rect(0, 0, xOffset, containerHeight));
+                    drawingContext.DrawImage(newImage, new Rect(xOffset, 0, scaledWidth, containerHeight));
+                    drawingContext.DrawRectangle(new SolidColorBrush(avgColor), null, new Rect(xOffset + scaledWidth, 0, xOffset, containerHeight));
+                }
+            }
+
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)containerWidth, (int)containerHeight, 96, 96, PixelFormats.Pbgra32);
+            renderTargetBitmap.Render(drawingVisual);
+
+            image.Source = ConvertRenderTargetBitmapToBitmapImage(renderTargetBitmap);
+        }
+
+        public Color GetAvgRgb(BitmapImage image)
+        {
+            Color backgroundColor = Color.FromRgb(255, 255, 255);
+            int totalPixels = 0;
+            long totalR = 0, totalG = 0, totalB = 0;
+
+            if (image is BitmapSource bitmapSource)
+            {
+                int width = bitmapSource.PixelWidth;
+                int height = bitmapSource.PixelHeight;
+                int stride = width * ((bitmapSource.Format.BitsPerPixel + 7) / 8);
+                byte[] pixels = new byte[height * stride];
+                bitmapSource.CopyPixels(pixels, stride, 0);
+
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        int index = y * stride + x * 4;
+
+                        // Ensure index is within bounds of the pixels array
+                        if (index + 3 >= pixels.Length)
+                            continue; // Skip this pixel if out of bounds
+
+                        byte b = pixels[index];
+                        byte g = pixels[index + 1];
+                        byte r = pixels[index + 2];
+                        byte a = pixels[index + 3]; // For images with an alpha channel
+
+                        totalR += r;
+                        totalG += g;
+                        totalB += b;
+                        totalPixels++;
+                    }
+                }
+            }
+
+            if (totalPixels > 0)
+            {
+                byte avgR = (byte)(totalR / totalPixels);
+                byte avgG = (byte)(totalG / totalPixels);
+                byte avgB = (byte)(totalB / totalPixels);
+
+                backgroundColor = Color.FromRgb(avgR, avgG, avgB);
+            }
+
+            return backgroundColor;
+        }
+
+        public BitmapImage ConvertRenderTargetBitmapToBitmapImage(RenderTargetBitmap renderTargetBitmap)
+        {
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+            using (MemoryStream stream = new MemoryStream())
+            {
+                encoder.Save(stream);
+                stream.Position = 0;
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.StreamSource = stream;
+                bitmapImage.EndInit();
+                bitmapImage.Freeze();
+
+                // Save the BitmapImage to a file in the app's directory under /temp
+                string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string tempDirectory = Path.Combine(appDirectory, "tempImages");
+                if (!Directory.Exists(tempDirectory))
+                {
+                    Directory.CreateDirectory(tempDirectory); // Ensure the directory exists
+                }
+                string filePath = Path.Combine(tempDirectory, $"{Guid.NewGuid()}.png");
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    PngBitmapEncoder fileEncoder = new PngBitmapEncoder();
+                    fileEncoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+                    fileEncoder.Save(fileStream);
+                }
+
+                // Set the URI of the BitmapImage to the saved file path
+                bitmapImage = new BitmapImage(new Uri(filePath));
+
+                return bitmapImage;
+            }
         }
     }
 }

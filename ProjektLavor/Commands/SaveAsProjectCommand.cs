@@ -24,7 +24,7 @@ namespace ProjektLavor.Commands
 
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = "Project Files (*.proj)|*.proj|All Files (*.*)|*.*",
+                Filter = "Projektfájlok (*.proj)|*.proj|Minden fájl (*.*)|*.*",
                 DefaultExt = ".proj"
             };
 

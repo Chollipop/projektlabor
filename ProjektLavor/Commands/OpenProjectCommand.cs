@@ -21,7 +21,7 @@ namespace ProjektLavor.Commands
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "Project Files (*.proj)|*.proj|All Files (*.*)|*.*",
+                Filter = "Projektfájlok (*.proj)|*.proj|Minden fájl (*.*)|*.*",
                 DefaultExt = ".proj"
             };
 

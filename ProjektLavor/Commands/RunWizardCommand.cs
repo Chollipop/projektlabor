@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Microsoft.Win32;
 using ProjektLavor.Stores;
 
 namespace ProjektLavor.Commands
@@ -22,6 +25,51 @@ namespace ProjektLavor.Commands
             if (_projectStore.CurrentProject?.Document == null) return;
 
             _projectStore.SaveState();
+
+            List<Image> placeholders = new List<Image>();
+            foreach (var page in _projectStore.CurrentProject.Document.Pages)
+            {
+                if (page.Child is FixedPage fixedPage)
+                {
+                    placeholders.AddRange(fixedPage.Children.OfType<AdornerDecorator>()
+                        .Where(d => ((d.Child as Image)?.Source?.ToString() ?? string.Empty).Contains("placeholder"))
+                        .Select(d => d.Child as Image));
+                }
+            }
+
+            if (placeholders?.Count > 0)
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog
+                {
+                    Multiselect = true,
+                    Filter = @"Képfájlok (*.png,*.jpg,*.jpeg,*.bmp,*.gif,*.tiff,*.exif)|" +
+                                        @"*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.exif|" +
+                                    @"Minden fájl (*.*)|" +
+                                        @"*.*",
+                    Title = "Kép megnyitása"
+                };
+
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    var selectedFiles = openFileDialog.FileNames.Take(placeholders.Count).ToList();
+
+                    foreach (var file in selectedFiles)
+                    {
+                        var bitmapImage = new BitmapImage(new Uri(file));
+                        double imageAspectRatio = (double)bitmapImage.PixelWidth / bitmapImage.PixelHeight;
+
+                        Image bestFitPlaceholder = placeholders
+                            .OrderBy(p => Math.Abs(((double)p.Width / p.Height) - imageAspectRatio))
+                            .FirstOrDefault();
+
+                        if (bestFitPlaceholder != null)
+                        {
+                            _projectStore.ApplyLetterboxImage(bestFitPlaceholder, bitmapImage);
+                            placeholders.Remove(bestFitPlaceholder);
+                        }
+                    }
+                }
+            }
 
             foreach (var page in _projectStore.CurrentProject.Document.Pages)
             {

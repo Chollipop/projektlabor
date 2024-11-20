@@ -119,7 +119,7 @@ namespace ProjektLavor.ViewModels
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog
                 {
-                    Filter = "Template files (*.template)|*.template",
+                    Filter = "Sablonfájlok (*.template)|*.template",
                     DefaultExt = ".template",
                     AddExtension = true
                 };

@@ -98,43 +98,11 @@ namespace ProjektLavor.Commands
                     RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)containerWidth, (int)containerHeight, 96, 96, PixelFormats.Pbgra32);
                     renderTargetBitmap.Render(drawingVisual);
 
-                    image.Source = renderTargetBitmap;
+                    image.Source = projectStore.ConvertRenderTargetBitmapToBitmapImage(renderTargetBitmap);
                 }
                 if (changeMethod == "letterbox")
                 {
-                    double containerWidth = image.ActualWidth;
-                    double containerHeight = image.ActualHeight;
-                    double containerAspectRatio = containerWidth / containerHeight;
-
-                    double imageAspectRatio = newImage.Width / newImage.Height;
-
-                    DrawingVisual drawingVisual = new DrawingVisual();
-                    using (DrawingContext drawingContext = drawingVisual.RenderOpen())
-                    {
-                        if (imageAspectRatio > containerAspectRatio)
-                        {
-                            double scaledHeight = containerWidth / imageAspectRatio;
-                            double yOffset = (containerHeight - scaledHeight) / 2;
-
-                            drawingContext.DrawRectangle(Brushes.Black, null, new Rect(0, 0, containerWidth, yOffset));
-                            drawingContext.DrawImage(newImage, new Rect(0, yOffset, containerWidth, scaledHeight));
-                            drawingContext.DrawRectangle(Brushes.Black, null, new Rect(0, yOffset + scaledHeight, containerWidth, yOffset));
-                        }
-                        else
-                        {
-                            double scaledWidth = containerHeight * imageAspectRatio;
-                            double xOffset = (containerWidth - scaledWidth) / 2;
-
-                            drawingContext.DrawRectangle(Brushes.Black, null, new Rect(0, 0, xOffset, containerHeight));
-                            drawingContext.DrawImage(newImage, new Rect(xOffset, 0, scaledWidth, containerHeight));
-                            drawingContext.DrawRectangle(Brushes.Black, null, new Rect(xOffset + scaledWidth, 0, xOffset, containerHeight));
-                        }
-                    }
-
-                    RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)containerWidth, (int)containerHeight, 96, 96, PixelFormats.Pbgra32);
-                    renderTargetBitmap.Render(drawingVisual);
-
-                    image.Source = renderTargetBitmap;
+                    projectStore.ApplyLetterboxImage(image, newImage);
                 }
             }
         }
