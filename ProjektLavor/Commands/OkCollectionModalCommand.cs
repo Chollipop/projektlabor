@@ -31,6 +31,7 @@ namespace ProjektLavor.Commands
             }
             else
             {
+                if (_selectedElementStore.SelectedElement == null) return;
                 if (_selectedElementStore.SelectedElement.GetType() == typeof(Image) && ((Image)_selectedElementStore.SelectedElement).Tag?.ToString() != "ignore_wizard")
                 {
                     _projectStore.SaveState();
