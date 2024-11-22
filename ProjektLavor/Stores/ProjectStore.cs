@@ -392,7 +392,7 @@ namespace ProjektLavor.Stores
                         if (element is AdornerDecorator decorator)
                         {
                             Image image = (Image)decorator.Child;
-                            image.ContextMenu = CreateImageContextMenu(image);
+                            image.ContextMenu = CreateImageContextMenu(image, image.Tag?.ToString() == "ignore_wizard");
                         }
                     }
                 }
@@ -413,7 +413,7 @@ namespace ProjektLavor.Stores
             return contextMenu;
         }
 
-        public ContextMenu CreateImageContextMenu(Image image)
+        public ContextMenu CreateImageContextMenu(Image image, bool IgnoreWizard = false)
         {
             ContextMenu contextMenu = new ContextMenu();
 
@@ -432,9 +432,12 @@ namespace ProjektLavor.Stores
             removeFrameMenuItem.Command = new RemoveFrameCommand();
             removeFrameMenuItem.CommandParameter = Tuple.Create((FrameworkElement)image, _selectedElementStore, this);
 
-            contextMenu.Items.Add(changeImageMenuItem);
             contextMenu.Items.Add(removeElementMenuItem);
-            contextMenu.Items.Add(removeFrameMenuItem);
+            if (!IgnoreWizard)
+            {
+                contextMenu.Items.Add(changeImageMenuItem);
+                contextMenu.Items.Add(removeFrameMenuItem);
+            }
 
             return contextMenu;
         }

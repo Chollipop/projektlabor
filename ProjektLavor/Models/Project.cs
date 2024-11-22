@@ -101,7 +101,7 @@ namespace ProjektLavor.Models
             if (ActivePage != null) page = ActivePage;
 
             AdornerDecorator adornerDecorator = new AdornerDecorator();
-            Image image = GetImageField(source);
+            Image image = GetImageField(source, IgnoreWizard);
             adornerDecorator.Child = image;
             
             image.Tag = Guid.NewGuid().ToString();
@@ -129,7 +129,7 @@ namespace ProjektLavor.Models
             return textBlock;
         }
 
-        private Image GetImageField(ImageSource source)
+        private Image GetImageField(ImageSource source, bool IgnoreWizard = false)
         {
             Image image = new Image();
             image.Source = source;
@@ -142,19 +142,23 @@ namespace ProjektLavor.Models
             changeImageMenuItem.Header = "Kép módosítása";
             changeImageMenuItem.Command = new ChangeImageSourceCommand();
             changeImageMenuItem.CommandParameter = Tuple.Create(image, _projectStore);
-            image.ContextMenu.Items.Add(changeImageMenuItem);
-
+            
             MenuItem removeElementMenuItem = new MenuItem();
             removeElementMenuItem.Header = "Törlés";
             removeElementMenuItem.Command = new RemoveElementCommand();
             removeElementMenuItem.CommandParameter = Tuple.Create((FrameworkElement)image, _selectedElementStore, _projectStore);
-            image.ContextMenu.Items.Add(removeElementMenuItem);
-
+            
             MenuItem removeFrameMenuItem = new MenuItem();
             removeFrameMenuItem.Header = "Keret törlése";
             removeFrameMenuItem.Command = new RemoveFrameCommand();
             removeFrameMenuItem.CommandParameter = Tuple.Create((FrameworkElement)image, _selectedElementStore, _projectStore);
-            image.ContextMenu.Items.Add(removeFrameMenuItem);
+
+            image.ContextMenu.Items.Add(removeElementMenuItem);
+            if (!IgnoreWizard)
+            {
+                image.ContextMenu.Items.Add(changeImageMenuItem);
+                image.ContextMenu.Items.Add(removeFrameMenuItem);
+            }
 
             return image;
         }

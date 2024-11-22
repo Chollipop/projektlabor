@@ -134,7 +134,7 @@ namespace ProjektLavor.Commands
                 if (element is AdornerDecorator decorator)
                 {
                     Image image = (Image)decorator.Child;
-                    image.ContextMenu = _projectStore.CreateImageContextMenu(image);
+                    image.ContextMenu = _projectStore.CreateImageContextMenu(image, image.Tag?.ToString() == "ignore_wizard");
                 }
             }
         }
