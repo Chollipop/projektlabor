@@ -56,10 +56,11 @@ namespace ProjektLavor.Commands
                     foreach (var file in selectedFiles)
                     {
                         var bitmapImage = new BitmapImage(new Uri(file));
-                        double imageAspectRatio = (double)bitmapImage.PixelWidth / bitmapImage.PixelHeight;
+
+                        double imageAspectRatio = (double)bitmapImage.PixelHeight / bitmapImage.PixelWidth;
 
                         Image bestFitPlaceholder = placeholders
-                            .OrderBy(p => Math.Abs(((double)p.Width / p.Height) - imageAspectRatio))
+                            .OrderBy(p => Math.Abs(((double)p.ActualHeight / p.ActualWidth) - imageAspectRatio))
                             .FirstOrDefault();
 
                         if (bestFitPlaceholder != null)
