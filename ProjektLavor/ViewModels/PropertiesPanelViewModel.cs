@@ -12,6 +12,8 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Linq;
+using Xceed.Wpf.AvalonDock.Controls;
 
 namespace ProjektLavor.ViewModels
 {
@@ -44,7 +46,17 @@ namespace ProjektLavor.ViewModels
             {
                 if (_elementX != value)
                 {
-                    if (value > 797) value = 797;
+                    var fixedPageParent = _element.FindVisualAncestor<FixedPage>();
+
+                    if (fixedPageParent.Width > fixedPageParent.Height)
+                    {
+                        if (value > 1124) value = 1124;
+                    }
+                    else
+                    {
+                        if (value > 797) value = 797;
+                    }
+
                     if (value < 0) value = 0;
                     _projectStore.SaveState();
                     _elementX = value;
@@ -61,7 +73,7 @@ namespace ProjektLavor.ViewModels
                 double top = FixedPage.GetTop((UIElement)(_element is Image ? _element.Parent : _element));
                 if (double.IsNaN(top))
                 {
-                    return Math.Ceiling(_elementX);
+                    return Math.Ceiling(_elementY);
                 }
                 return Math.Ceiling(top);
             }
@@ -69,7 +81,17 @@ namespace ProjektLavor.ViewModels
             {
                 if (_elementY != value)
                 {
-                    if (value > 1124) value = 1124;
+                    var fixedPageParent = _element.FindVisualAncestor<FixedPage>();
+
+                    if (fixedPageParent.Width > fixedPageParent.Height)
+                    {
+                        if (value > 797) value = 797;
+                    }
+                    else
+                    {
+                        if (value > 1124) value = 1124;
+                    }
+
                     if (value < 0) value = 0;
                     _projectStore.SaveState();
                     _elementY = value;
