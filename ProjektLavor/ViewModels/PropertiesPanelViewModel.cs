@@ -343,6 +343,7 @@ namespace ProjektLavor.ViewModels
             {
                 _projectStore.SaveState();
 
+                if (value < 1) value = 1;
                 fontSize = value;
                 _element.SetValue(TextElement.FontSizeProperty, (double)fontSize);
                 OnPropertyChanged(nameof(FontSize));
