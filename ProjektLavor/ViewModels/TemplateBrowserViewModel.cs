@@ -116,7 +116,7 @@ namespace ProjektLavor.ViewModels
             UIElementCollection childrenToAdd = null;
             FixedPage loadedPage = new FixedPage() { Background = Brushes.White, Tag = Guid.NewGuid() };
 
-            if (SelectedItem.Value.Child.Tag == "custom_template")
+            if (SelectedItem.Value.Child.Tag.ToString() == "custom_template")
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog
                 {

@@ -25,24 +25,21 @@ namespace ProjektLavor.Commands
             if (_projectStore.CurrentProject == null)
                 return;
 
-            string xpsFilePath = "exported_project.xps"; // Temporary XPS file path
-            string pdfFilePath = "exported_project.pdf"; // Desired PDF file path
+            string xpsFilePath = "exported_project.xps";
+            string pdfFilePath = "exported_project.pdf";
 
             try
             {
                 ExportToXps(_projectStore.CurrentProject.Document, xpsFilePath);
                 ConvertXpsToPdf(xpsFilePath, pdfFilePath);
-                // Notify user of success, e.g., via a message box or logging
             }
             catch (Exception ex)
-            {
-                // Handle exceptions, e.g., log the error or notify the user
-            }
+            { }
             finally
             {
                 if (File.Exists(xpsFilePath))
                 {
-                    File.Delete(xpsFilePath); // Clean up temporary XPS file
+                    File.Delete(xpsFilePath);
                 }
             }
         }

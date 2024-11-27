@@ -136,19 +136,6 @@ namespace ProjektLavor
 
             if (newWidth < 10) newWidth = 10;
             if (newHeight < 10) newHeight = 10;
-            //if (newWidth < 10)
-            //{
-            //    if (thumbTag == "TopLeft" || thumbTag == "BottomLeft")
-            //        left -= 10 - newWidth;
-            //    newWidth = 10;
-            //}
-
-            //if (newHeight < 10)
-            //{
-            //    if (thumbTag == "TopLeft" || thumbTag == "TopRight")
-            //        top -= 10 - newHeight;
-            //    newHeight = 10;
-            //}
             if (scaleTransform != null)
             {
                 newWidth /= Math.Abs(scaleTransform.ScaleX);

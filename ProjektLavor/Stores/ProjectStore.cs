@@ -217,7 +217,6 @@ namespace ProjektLavor.Stores
             }
         }
 
-        // Helper class for FrameAdorner state
         [Serializable]
         public class FrameAdornerState
         {
@@ -238,7 +237,6 @@ namespace ProjektLavor.Stores
                     System.Windows.Markup.XamlWriter.Save(document, writer);
                 }
 
-                // Serialize FrameAdorner states
                 foreach (var page in document.Pages)
                 {
                     if (page.Child is FixedPage fixedPage)
@@ -340,7 +338,7 @@ namespace ProjektLavor.Stores
                 }
 
                 ClearAdorners();
-                // Deserialize FrameAdorner states
+
                 foreach (var adornerElement in xDocument.Root.Elements("FrameAdornerState"))
                 {
                     var frameAdornerState = new FrameAdornerState
@@ -360,7 +358,10 @@ namespace ProjektLavor.Stores
 
                                 if (element is Image image && image.Tag.ToString() == frameAdornerState.AdornedElement)
                                 {
-                                    adorners.Add(new Tuple<string, Image, BitmapImage>(fixedPage.Tag.ToString(), image, new BitmapImage(new Uri(frameAdornerState.SourceUri))));
+                                    adorners.Add(new Tuple<string, Image, BitmapImage>(
+                                        fixedPage.Tag.ToString(), image,
+                                        new BitmapImage(new Uri(frameAdornerState.SourceUri)))
+                                    );
                                 }
                             }
                         }
@@ -372,7 +373,6 @@ namespace ProjektLavor.Stores
             }
             catch (Exception e)
             {
-                Debug.Write(e.Message);
                 return null;
             }
         }
@@ -483,9 +483,7 @@ namespace ProjektLavor.Stores
                 }
             }
             catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
+            { }
         }
 
         public void Redo()
@@ -529,9 +527,7 @@ namespace ProjektLavor.Stores
                 }
             }
             catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
+            { }
         }
 
         public void ClearUndoRedoStacks()
@@ -548,7 +544,6 @@ namespace ProjektLavor.Stores
 
             double imageAspectRatio = newImage.Width / newImage.Height;
 
-            // Get the average color of the new image
             Color avgColor = GetAvgRgb(newImage);
 
             DrawingVisual drawingVisual = new DrawingVisual();
@@ -600,14 +595,13 @@ namespace ProjektLavor.Stores
                     {
                         int index = y * stride + x * 4;
 
-                        // Ensure index is within bounds of the pixels array
                         if (index + 3 >= pixels.Length)
-                            continue; // Skip this pixel if out of bounds
+                            continue;
 
                         byte b = pixels[index];
                         byte g = pixels[index + 1];
                         byte r = pixels[index + 2];
-                        byte a = pixels[index + 3]; // For images with an alpha channel
+                        byte a = pixels[index + 3];
 
                         totalR += r;
                         totalG += g;
@@ -644,12 +638,11 @@ namespace ProjektLavor.Stores
                 bitmapImage.EndInit();
                 bitmapImage.Freeze();
 
-                // Save the BitmapImage to a file in the app's directory under /temp
                 string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 string tempDirectory = Path.Combine(appDirectory, "tempImages");
                 if (!Directory.Exists(tempDirectory))
                 {
-                    Directory.CreateDirectory(tempDirectory); // Ensure the directory exists
+                    Directory.CreateDirectory(tempDirectory);
                 }
                 string filePath = Path.Combine(tempDirectory, $"{Guid.NewGuid()}.png");
                 using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
@@ -659,7 +652,6 @@ namespace ProjektLavor.Stores
                     fileEncoder.Save(fileStream);
                 }
 
-                // Set the URI of the BitmapImage to the saved file path
                 bitmapImage = new BitmapImage(new Uri(filePath));
 
                 return bitmapImage;

@@ -24,7 +24,6 @@ namespace ProjektLavor.Commands
             _navigationService.Navigate();
             if (_projectStore.CurrentProject == null || String.IsNullOrEmpty(_viewModel.TextInput)) return;
             _projectStore.CurrentProject.AddNewTextField(_viewModel.TextInput);
-            //_projectStore.CurrentProject.AddNewImageField(_viewModel.TextInput);
         }
     }
 }

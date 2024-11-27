@@ -70,9 +70,7 @@ namespace ProjektLavor.Commands
                 }
             }
             catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
+            { }
         }
 
         public string SerializeFixedPage(FixedPage fixedPage)

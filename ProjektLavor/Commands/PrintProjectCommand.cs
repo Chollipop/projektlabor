@@ -29,9 +29,6 @@ namespace ProjektLavor.Commands
                 {
                     FixedDocument document = _projectStore.CurrentProject.Document;
 
-                    //printDialog.PrintDocument(document.DocumentPaginator, "Print Project");
-                    // Notify user of success, e.g., via a message box or logging
-
                     foreach (var page in document.Pages)
                     {
                         FixedPage fixedPage = page.Child as FixedPage;
@@ -48,7 +45,6 @@ namespace ProjektLavor.Commands
                 }
                 catch (Exception ex)
                 {
-                    // Handle exceptions, e.g., log the error or notify the user
                 }
             }
         }
@@ -91,8 +87,6 @@ namespace ProjektLavor.Commands
 
                         double x = FixedPage.GetLeft(element);
                         double y = FixedPage.GetTop(element);
-                        //double x = FixedPage.GetLeft((UIElement)(element is Image ? element.Parent : element));
-                        //double y = FixedPage.GetTop((UIElement)(element is Image ? element.Parent : element));
                         double width = element.RenderSize.Width;
                         double height = element.RenderSize.Height;
                         double frameOverhangX = width * .1;

@@ -103,14 +103,13 @@ namespace ProjektLavor.Commands
                                 {
                                     int index = y * stride + x * 4;
 
-                                    // Ensure index is within bounds of the pixels array
                                     if (index + 3 >= pixels.Length)
-                                        continue; // Skip this pixel if out of bounds
+                                        continue;
 
                                     byte b = pixels[index];
                                     byte g = pixels[index + 1];
                                     byte r = pixels[index + 2];
-                                    byte a = pixels[index + 3]; // For images with an alpha channel
+                                    byte a = pixels[index + 3];
 
                                     totalR += r;
                                     totalG += g;

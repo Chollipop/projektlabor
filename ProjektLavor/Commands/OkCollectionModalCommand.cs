@@ -47,8 +47,6 @@ namespace ProjektLavor.Commands
                     adornerLayer?.Add(new FrameAdorner(_selectedElementStore.SelectedElement, _viewModel.SelectedImage.Source.Clone()));
                 }
             }
-
-            //_selectedElementStore.SelectedElement = null;
             _navigationService.Navigate();
         }
     }

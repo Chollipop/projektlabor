@@ -6,8 +6,4 @@ namespace ProjektLavor.Services
     {
         void Navigate();
     }
-    //public interface INavigationService
-    //{
-    //    void Navigate();
-    //}
 }

@@ -117,7 +117,6 @@ namespace ProjektLavor.ViewModels
                     new KeyValuePair<Image, PageContent>(new Image() { Source = new BitmapImage(new Uri("Pack://application:,,,/Assets/Templates/plus-symbol-button.png")) }, new PageContent() { Child = new FixedPage() { Tag = "custom_template" } })
                 })));
 
-            //OpenNewTextElementModalCommand = new NavigateCommand(newTextElementNavigationService);
             OpenNewTextElementModalCommand = new NavigateCommand(
                 new ModalNavigationService<TextElementInputViewModel>(
                     modalNavigationStore,

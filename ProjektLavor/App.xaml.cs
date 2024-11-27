@@ -8,9 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ProjektLavor
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
         private readonly IServiceProvider _serviceProvider;
@@ -46,7 +43,6 @@ namespace ProjektLavor
         protected override void OnStartup(StartupEventArgs e)
         {
             INavigationService initialNavigationService = _serviceProvider.GetRequiredService<INavigationService>();
-            //INavigationService initialNavigationService = CreateEditorLayoutNavigationService(_serviceProvider);
             initialNavigationService.Navigate();
 
             MainWindow = _serviceProvider.GetRequiredService<MainWindow>();
@@ -76,7 +72,6 @@ namespace ProjektLavor
 
         private ToolbarViewModel CreateToolbarViewModel(IServiceProvider serviceProvider)
         {
-            //return new ToolbarViewModel(CreateNewTextElementModalNavigationService(serviceProvider));
             return new ToolbarViewModel(serviceProvider);
         }
         private NavigationBarViewModel CreateNavigationBarViewModel(IServiceProvider serviceProvider)
