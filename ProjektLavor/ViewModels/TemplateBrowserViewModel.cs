@@ -144,7 +144,8 @@ namespace ProjektLavor.ViewModels
 
             if (childrenToAdd != null)
             {
-                _projectStore.NewPage();
+                bool rotate = loadedPage.Width > loadedPage.Height;
+                _projectStore.NewPage(null, rotate);
 
                 var newPage = _projectStore.CurrentProject.Document.Pages[_projectStore.CurrentProject.Document.Pages.Count - 1];
                 var newPageChildren = newPage.Child.Children;
